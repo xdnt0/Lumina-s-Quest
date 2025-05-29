@@ -1,35 +1,34 @@
 package jo.student.proyectof;
-import javafx.application.Application;
+//librerias
+import javafx.application.Application; //este es Application.java (hace parte de javaFX)
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class App extends Application {
+public class Game extends Application {
 
     // Tamaño de la ventana
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 720;
 
-    @Override
-    public void start(Stage primaryStage) {
-        Pane root = new Pane(); // Contenedor principal
-        Scene scene = new Scene(root, WIDTH, HEIGHT);
+    @Override //marca que "Game" es una extension de Application.java
+public void start(Stage primaryStage) {
+    Pane root = new Pane(); // Contenedor principal
+    Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-        
-        Image personajeImg = new Image(getClass().getResourceAsStream("/resources/img/personaje.png")); //importar png
-        ImageView personajeView = new ImageView(personajeImg);
-        personajeView.setLayoutX(10);
-        personajeView.setLayoutY(10);//tamano personaje
-        root.getChildren().add(personajeView);
-        primaryStage.setTitle("Lumina's Quest");//titulo ventana
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    // Crea e inserta el personaje desde "Entidades"
+    Entidades entidades = new Entidades();
+    ImageView personaje = entidades.crearPersonaje();
+    root.getChildren().add(personaje);
 
-    }
+    primaryStage.setTitle("Lumina's Quest");//titulo ventana
+    primaryStage.setScene(scene);
+    primaryStage.show();
+}
+
 
     public static void main(String[] args) {
-        launch(args);
+        launch(args); //llama a start desde Application.java
     }
 }
