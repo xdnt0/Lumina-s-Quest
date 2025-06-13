@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class Game extends Application {
 
     // Tamaño de la ventana
-    private static final int WIDTH = 1200;
+    private static final int WIDTH = 1210;
     private static final int HEIGHT = 720;
 
     @Override //marca que "Game" es una extension de Application.java
