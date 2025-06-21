@@ -1,4 +1,8 @@
 jo\student\proyectof\SystemInfo.class
-jo\student\proyectof\Entidades.class
+jo\student\proyectof\entidades\Lumina.class
+jo\student\proyectof\entidades\Enemigos.class
+jo\student\proyectof\minijuegos\Minijuegos.class
+jo\student\proyectof\entidades\Vendedor.class
 module-info.class
+jo\student\proyectof\entidades\Entidades.class
 jo\student\proyectof\Game.class

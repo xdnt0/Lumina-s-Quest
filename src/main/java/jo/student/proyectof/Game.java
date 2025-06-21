@@ -1,5 +1,6 @@
 package jo.student.proyectof;
 //librerias
+import jo.student.proyectof.entidades.Entidades;
 import javafx.application.Application; //este es Application.java (hace parte de javaFX)
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
