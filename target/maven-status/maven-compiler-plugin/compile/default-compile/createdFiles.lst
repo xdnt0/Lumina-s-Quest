@@ -1,12 +1,14 @@
 jo\student\proyectof\SystemInfo.class
 jo\student\proyectof\entidades\Lumina.class
 jo\student\proyectof\entidades\Moneda.class
-jo\student\proyectof\entidades\Enemigos.class
 jo\student\proyectof\entidades\Fragmentoalma.class
 jo\student\proyectof\interfaz\Menu.class
 jo\student\proyectof\entidades\Entidad.class
-jo\student\proyectof\minijuegos\Minijuegos.class
 jo\student\proyectof\entidades\Vendedor.class
 module-info.class
-jo\student\proyectof\tienda\Tienda.class
 jo\student\proyectof\Game.class
+jo\student\proyectof\interfaz\Controladores.class
+jo\student\proyectof\interfaz\Controladores$1.class
+jo\student\proyectof\entidades\Enemigos.class
+jo\student\proyectof\minijuegos\Minijuegos.class
+jo\student\proyectof\tienda\Tienda.class

@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
  *
  * @author johan
  */
-public abstract class Moneda extends Entidad {
+public class Moneda extends Entidad {
 
     public Moneda(double x, double y) {
         Image img = new Image(getClass().getResourceAsStream("/images/moneda.png"));
@@ -15,4 +15,8 @@ public abstract class Moneda extends Entidad {
         sprite.setLayoutX(x);
         sprite.setLayoutY(y);
     }
+    @Override
+public void colision(Entidad otra) {
+    // La moneda no hace nada al colisionar
+}
 }
