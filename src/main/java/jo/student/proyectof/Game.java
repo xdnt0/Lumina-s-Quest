@@ -9,15 +9,16 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
+//clases del juego importadas
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Moneda;
 import jo.student.proyectof.interfaz.Controladores;
+import jo.student.proyectof.minijuegos.Laberinto;
 
 public class Game extends Application {
 
-    private static final int WIDTH = 1920;
-    private static final int HEIGHT = 1200;
+    private static final int WIDTH = 1280;
+    private static final int HEIGHT = 720;
 
     private Lumina lumina;
     private final List<Moneda> monedas = new ArrayList<>();
@@ -34,8 +35,8 @@ public class Game extends Application {
 
         // Crear monedas
         for (int i = 0; i < 5; i++) {
-            Moneda m = new Moneda(100 + i * 60, 100);
-            monedas.add(m);
+            Moneda m = new Moneda(100 + i * 60, 400);//arreglo para generar monedas,
+            monedas.add(m);                          //se debe corregir cuando se implemente en los minijuegos
             root.getChildren().add(m.getSprite());
         }
 
