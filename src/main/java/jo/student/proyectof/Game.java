@@ -16,8 +16,8 @@ import jo.student.proyectof.interfaz.Controladores;
 
 public class Game extends Application {
 
-    private static final int WIDTH = 1200;
-    private static final int HEIGHT = 720;
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1200;
 
     private Lumina lumina;
     private final List<Moneda> monedas = new ArrayList<>();
@@ -28,8 +28,8 @@ public class Game extends Application {
         root = new Pane();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-        // Crear al jugador
-        lumina = new Lumina(); // ← usar el atributo de clase
+        // Crear al personaje
+        lumina = new Lumina(); 
         root.getChildren().add(lumina.getSprite());
 
         // Crear monedas
@@ -39,7 +39,7 @@ public class Game extends Application {
             root.getChildren().add(m.getSprite());
         }
 
-        // Crear controles con detección de colisiones
+        // Crear controles y la detección de colisiones
         Controladores controles = new Controladores(lumina, this::detectarColisiones);
         controles.configurarControles(scene);
 
