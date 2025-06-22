@@ -4,6 +4,6 @@ package jo.student.proyectof.entidades;
  *
  * @author johan
  */
-public abstract class Vendedor extends Entidad{
+public abstract class Fragmentoalma extends Entidad{
     
 }

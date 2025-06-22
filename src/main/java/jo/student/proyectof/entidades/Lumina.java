@@ -14,5 +14,14 @@ public class Lumina extends Entidad{
         this.sprite.setLayoutX(10);
         this.sprite.setLayoutY(10);
             }
-
+     @Override
+    public void colision(Entidad otra) {
+        if (otra instanceof Enemigos) {
+            System.out.println("Lumina fue dañada por un enemigo");
+            // Lógica para perder vida cuando toca un enemigo
+        } else if (otra instanceof Moneda) {
+            System.out.println("Lumina recogió una moneda");
+            // Lógica para sumar moneda
+        }
+    }
 }
