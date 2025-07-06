@@ -11,8 +11,8 @@ public class Lumina extends Entidad{
     public Lumina(){
         Image imagen = new Image(getClass().getResourceAsStream("/images/personaje.png"));
         this.sprite = new ImageView(imagen);
-        this.sprite.setFitWidth(128);   // ancho deseado (en píxeles)
-        this.sprite.setFitHeight(128);
+        this.sprite.setFitWidth(50);   // ancho deseado (en píxeles)
+        this.sprite.setFitHeight(50);
         this.sprite.setLayoutX(0);
         this.sprite.setLayoutY(256);
             }
@@ -26,4 +26,15 @@ public class Lumina extends Entidad{
             // Lógica para sumar moneda
         }
     }
+    
+    private boolean colisionDetectada = false;
+
+    public void setColision(boolean colision) {
+        this.colisionDetectada = colision;
+    }
+
+    public boolean huboColision() {
+        return this.colisionDetectada;
+    }
+    
 }

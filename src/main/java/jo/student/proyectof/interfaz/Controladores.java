@@ -19,15 +19,30 @@ public class Controladores {
     }
 
     public void configurarControles(Scene escena) {
-        escena.setOnKeyPressed(e -> {
-            KeyCode tecla = e.getCode();
-            switch (tecla) {
-                case RIGHT -> lumina.getSprite().setLayoutX(lumina.getSprite().getLayoutX() + 10);
-                case LEFT -> lumina.getSprite().setLayoutX(lumina.getSprite().getLayoutX() - 10);
-                case UP -> lumina.getSprite().setLayoutY(lumina.getSprite().getLayoutY() - 10);
-                case DOWN -> lumina.getSprite().setLayoutY(lumina.getSprite().getLayoutY() + 10);
-            }
-             onMovimiento.run();
-        });
-    }
+    escena.setOnKeyPressed(e -> {
+        KeyCode tecla = e.getCode();
+
+        // Guardamos posición previa
+        double prevX = lumina.getSprite().getLayoutX();
+        double prevY = lumina.getSprite().getLayoutY();
+
+        // Movimiento provisional
+        switch (tecla) {
+            case RIGHT -> lumina.getSprite().setLayoutX(prevX + 10);
+            case LEFT -> lumina.getSprite().setLayoutX(prevX - 10);
+            case UP -> lumina.getSprite().setLayoutY(prevY - 10);
+            case DOWN -> lumina.getSprite().setLayoutY(prevY + 10);
+        }
+
+        // Ejecutar verificación de colisión
+        onMovimiento.run();
+
+        // Si hubo colisión, revertimos el movimiento
+        if (lumina.huboColision()) {
+            lumina.getSprite().setLayoutX(prevX);
+            lumina.getSprite().setLayoutY(prevY);
+            lumina.setColision(false); // Resetear estado
+        }
+    });
+}
 }
