@@ -10,6 +10,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
+import jo.student.proyectof.entidades.Enemigos;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -21,13 +25,25 @@ public class LaberintoView {
     private Pane laberintoPane;
     private Lumina lumina;
     private Fragmentoalma fragmentoalma;
+    private Enemigos robotCentinela;
+    private boolean fragmentoRecogido = false;
+    private int puntoActual = 0;
+    
+    private List<double[]> caminoRobot; // Lista de puntos (x, y)
+    private List<ImageView> corazones = new ArrayList<>();
+    
 
+    
+    
     public LaberintoView(int width, int height) {
         laberintoPane = new Pane();
-        laberintoPane.setPrefSize(width, height);  // ← Usa el tamaño dado por Game.java
+        laberintoPane.setPrefSize(width, height);
         inicializarLaberinto();
+        inicializarCaminoRobot();
+        inicializarHUD();
     }
-
+    
+    
     private void inicializarLaberinto() {
         // 1. Fondo del mapa del laberinto
         Image imagenMapa = new Image(getClass().getResourceAsStream("/images/laberinto.png"));
@@ -39,7 +55,7 @@ public class LaberintoView {
             {28, 125, 39, 236},
             {28, 125, 422, 32},
             {413, 125, 37, 136},
-            {413, 228, 155, 32},
+            {413, 228, 154, 32},
             {530, 125, 37, 136},
             {530, 125, 379, 32},
             {872, 125, 37, 142},
@@ -125,16 +141,121 @@ public class LaberintoView {
         lumina.getSprite().setY(128);
         laberintoPane.getChildren().add(lumina.getSprite());
         
-        fragmentoalma = new Fragmentoalma(1720, 910); // Ajusta la posición según tu mapa
+        fragmentoalma = new Fragmentoalma(1720, 910); // Ajusta la posición según el mapa
         laberintoPane.getChildren().add(fragmentoalma.getSprite());
         
     }
+    
+    
+    private void inicializarCaminoRobot() {
+        caminoRobot = new ArrayList<>();
+
+        // Agrega aquí los puntos que deseas que el robot siga (x, y)
+        caminoRobot.add(new double[]{1794, 958});
+        caminoRobot.add(new double[]{1786, 147});
+        caminoRobot.add(new double[]{1614, 147});
+        caminoRobot.add(new double[]{1614, 270});
+        caminoRobot.add(new double[]{1679, 270});
+        caminoRobot.add(new double[]{1679, 376});
+        caminoRobot.add(new double[]{1606, 376});
+        caminoRobot.add(new double[]{1606, 482});
+        caminoRobot.add(new double[]{1496, 482});
+        caminoRobot.add(new double[]{1496, 383});
+        caminoRobot.add(new double[]{1377, 383});
+        caminoRobot.add(new double[]{1377, 276});
+        caminoRobot.add(new double[]{807, 276});
+        caminoRobot.add(new double[]{807, 168});
+        caminoRobot.add(new double[]{579, 168});
+        caminoRobot.add(new double[]{579, 272});
+        caminoRobot.add(new double[]{345, 272});
+        caminoRobot.add(new double[]{345, 170});
+        caminoRobot.add(new double[]{80, 170});
+        caminoRobot.add(new double[]{80, 380});
+        caminoRobot.add(new double[]{24, 380});
+        
+        
+        
+        
+        
+        // Puedes agregar más puntos según el diseño de tu laberinto
+    }
+    
+    
+    
+    public void moverRobotPorCamino() {
+        if (robotCentinela != null && fragmentoRecogido && puntoActual < caminoRobot.size()) {
+            double[] objetivo = caminoRobot.get(puntoActual);
+            double x = objetivo[0];
+            double y = objetivo[1];
+
+            robotCentinela.moverHacia(x, y, 2.2); // velocidad
+
+            double dx = Math.abs(robotCentinela.getX() - x);
+            double dy = Math.abs(robotCentinela.getY() - y);
+
+            if (dx < 5 && dy < 5) {
+                puntoActual++; // Avanza al siguiente punto
+            }
+        }
+    }
+    
+    
+    public void verificarColisionRobotLumina() {
+        if (robotCentinela == null || lumina == null) return;
+
+            if (robotCentinela.getSprite().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
+                if (!lumina.estaInvulnerable()) {
+                lumina.perderVida();
+                actualizarCorazones();
+            }
+        }
+    }
+    
+    public void mostrarRobotCentinela() {
+        if (robotCentinela == null) {
+            robotCentinela = new Enemigos(1490, 800);
+            laberintoPane.getChildren().add(robotCentinela.getSprite());
+            puntoActual = 0;
+        }
+    }
+    
+    
+    private void inicializarHUD() {
+        Image corazonImg = new Image(getClass().getResourceAsStream("/images/corazon.png"));
+        for (int i = 0; i < lumina.getVidas(); i++) {
+            ImageView corazon = new ImageView(corazonImg);
+            corazon.setFitWidth(40);
+            corazon.setFitHeight(40);
+            corazon.setX(20 + i * 50);
+            corazon.setY(20);
+            corazones.add(corazon);
+            laberintoPane.getChildren().add(corazon);
+        }
+    }
+    
+    
+    private void actualizarCorazones() {
+        for (int i = 0; i < corazones.size(); i++) {
+            corazones.get(i).setVisible(i < lumina.getVidas());
+        }
+    }
+    
     
     public Fragmentoalma getFragmentoalma() {
         return fragmentoalma;
     }
     
-
+    public void marcarFragmentoRecogido() {
+        if (fragmentoalma != null) {
+            fragmentoalma.setRecogido(true);
+            fragmentoRecogido = true; // ← Activar movimiento del robot
+        }
+    }
+      
+    public Enemigos getRobotCentinela() {
+        return robotCentinela;
+    }
+    
     public Pane getLaberintoPane() {
         return laberintoPane;
     }

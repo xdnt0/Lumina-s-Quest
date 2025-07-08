@@ -1,13 +1,22 @@
 package jo.student.proyectof.entidades;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
 /**
  *
  * @author johan
  */
+
 public class Lumina extends Entidad{
+    
+    private int vidas = 3;
+    private boolean colisionDetectada = false;
+    private boolean invulnerable = false;
+    
     public Lumina(){
         Image imagen = new Image(getClass().getResourceAsStream("/images/personaje.png"));
         this.sprite = new ImageView(imagen);
@@ -15,19 +24,43 @@ public class Lumina extends Entidad{
         this.sprite.setFitHeight(50);
         this.sprite.setLayoutX(0);
         this.sprite.setLayoutY(256);
-            }
-     @Override
+    }
+    
+    @Override
     public void colision(Entidad otra) {
         if (otra instanceof Enemigos) {
             System.out.println("Lumina fue dañada por un enemigo");
-            // Lógica para perder vida cuando toca un enemigo
+            perderVida();
         } else if (otra instanceof Moneda) {
-            System.out.println("Lumina recogio una moneda");
-            // Lógica para sumar moneda
+            System.out.println("Lumina recogió una moneda");
         }
     }
     
-    private boolean colisionDetectada = false;
+    
+    public void hacerInvulnerable() {
+        invulnerable = true;
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000); // 3 segundos
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            invulnerable = false;
+        }).start();
+    }
+    
+    
+    public void perderVida() {
+        if (!invulnerable && vidas > 0) {
+            vidas--;
+            hacerInvulnerable();
+            System.out.println("Lumina perdio una vida. Vidas restantes: " + vidas);
+        }
+    }
+    
+    public int getVidas() {
+        return vidas;
+    }
 
     public void setColision(boolean colision) {
         this.colisionDetectada = colision;
@@ -37,4 +70,19 @@ public class Lumina extends Entidad{
         return this.colisionDetectada;
     }
     
+    public boolean estaInvulnerable() {
+        return invulnerable;
+    }
+        
 }
+
+/*public void perderVida() {
+        if (vidas > 0) {
+            vidas--;
+            System.out.println("Lumina perdio una vida. Vidas restantes: " + vidas);
+            if (vidas == 0) {
+                System.out.println("¡Lumina ha perdido todas sus vidas!");
+                // Aquí puedes agregar lógica de fin del juego
+            }
+        }
+    }*/

@@ -9,17 +9,23 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.application.Platform;
+import javafx.animation.AnimationTimer;
+
 //clases del juego importadas
+
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Moneda;
 import jo.student.proyectof.interfaz.Controladores;
 import jo.student.proyectof.minijuegos.Laberinto;
 import jo.student.proyectof.minijuegos.LaberintoView;
+import jo.student.proyectof.entidades.Fragmentoalma;
+import javafx.animation.Timeline;
 
 public class Game extends Application {
+    
+    
 
     // ----------------------------------------
     // CAMBIAR AQUÍ LA RESOLUCIÓN: Descomentando o comentando
@@ -31,8 +37,8 @@ public class Game extends Application {
     // private static final int WIDTH = 1280;
     // private static final int HEIGHT = 720;
     
-    //
     private boolean fragmentoRecogido = false;
+    
 
     @Override
     public void start(Stage primaryStage) {
@@ -51,10 +57,19 @@ public class Game extends Application {
         // Configuración ventana
         primaryStage.setScene(scene);
         primaryStage.setTitle("Minijuego - Laberinto");
-
-
         primaryStage.setResizable(false); // Para evitar redimensionamiento
         primaryStage.show();
+        
+        // Bucle de juego: se ejecuta cada frame (~60 veces por segundo)
+        AnimationTimer gameLoop = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                laberintoView.moverRobotPorCamino();
+                laberintoView.verificarColisionRobotLumina();
+            }
+        };
+        gameLoop.start();
+        
     }
 
     private void detectarColisionesLaberinto(LaberintoView laberintoView) {
@@ -76,13 +91,16 @@ public class Game extends Application {
         
         
         // Detección con fragmento del alma
-        var fragmento = laberintoView.getFragmentoalma();
+        Fragmentoalma fragmento = laberintoView.getFragmentoalma();
         if (!fragmentoRecogido && fragmento != null &&
             lumina.getSprite().getBoundsInParent().intersects(fragmento.getSprite().getBoundsInParent())) {
 
-            fragmentoRecogido = true; // marcar como recogido
-            pane.getChildren().remove(fragmento.getSprite()); // quitar visualmente
+            fragmentoRecogido = true;
+            pane.getChildren().remove(fragmento.getSprite());
             System.out.println("Has recogido el Fragmento del Alma!");
+
+            laberintoView.mostrarRobotCentinela(); // Aparece el robot
+            laberintoView.marcarFragmentoRecogido(); // ← Notifica que debe empezar a moverse
         }
         
         
