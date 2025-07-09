@@ -130,8 +130,8 @@ public class LaberintoView {
             Rectangle pared = new Rectangle(datos[2], datos[3]); // ancho, alto
             pared.setX(datos[0]);
             pared.setY(datos[1]);
-            //pared.setFill(Color.rgb(255, 255, 255, 0.0)); // invisible
-            pared.setFill(Color.rgb(255, 255, 255, 0.6)); // visible para testing
+            pared.setFill(Color.rgb(255, 255, 255, 0.0)); // invisible
+            //pared.setFill(Color.rgb(255, 255, 255, 0.6)); // visible para testing
             laberintoPane.getChildren().add(pared);
         }
 

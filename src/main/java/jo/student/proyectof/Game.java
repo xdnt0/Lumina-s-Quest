@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.application.Platform;
+import javafx.application.Application;
 import javafx.animation.AnimationTimer;
 
 //clases del juego importadas
@@ -20,6 +21,7 @@ import jo.student.proyectof.entidades.Moneda;
 import jo.student.proyectof.interfaz.Controladores;
 import jo.student.proyectof.minijuegos.Laberinto;
 import jo.student.proyectof.minijuegos.LaberintoView;
+import jo.student.proyectof.minijuegos.SalaInicialView;
 import jo.student.proyectof.entidades.Fragmentoalma;
 import javafx.animation.Timeline;
 
@@ -38,29 +40,56 @@ public class Game extends Application {
     // private static final int HEIGHT = 720;
     
     private boolean fragmentoRecogido = false;
+    private Scene scene;
+    private SalaInicialView salaInicialView;
+    private Stage primaryStage; // Guardar para poder cambiar escena más tarde
     
 
     @Override
+    
     public void start(Stage primaryStage) {
+        // Inicializar sala inicial
+        salaInicialView = new SalaInicialView(WIDTH, HEIGHT);
+        scene = new Scene(salaInicialView.getRoot(), WIDTH, HEIGHT);
+
+        // Configurar acciones al entrar en cada puerta
+        salaInicialView.setOnPuerta1(() -> lanzarMinijuegoLaberinto(primaryStage));
+        // salaInicialView.setOnPuerta2(() -> ... );
+        // salaInicialView.setOnPuerta3(() -> ... );
+
+        // Controles para mover a Lumina
+        Controladores controlesSala = new Controladores(
+            salaInicialView.getLumina(),
+            () -> detectarColisionSalaInicial()
+        );
+        controlesSala.configurarControles(scene);
+
+        // Configurar ventana
+        primaryStage.setTitle("Luminas quest");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+        this.primaryStage = primaryStage;
+    }
+    
+    
+    private void lanzarMinijuegoLaberinto(Stage primaryStage) {
         LaberintoView laberintoView = new LaberintoView(WIDTH, HEIGHT);
         Pane laberintoPane = laberintoView.getLaberintoPane();
 
-        Scene scene = new Scene(laberintoPane, WIDTH, HEIGHT);
+        Scene nuevaScene = new Scene(laberintoPane, WIDTH, HEIGHT);
 
-        // Controles del minijuego
+        // Reutiliza controladores con verificación de colisión con paredes
         Controladores controles = new Controladores(
             laberintoView.getLumina(),
             () -> detectarColisionesLaberinto(laberintoView)
         );
-        controles.configurarControles(scene);
+        controles.configurarControles(nuevaScene);
 
-        // Configuración ventana
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Minijuego - Laberinto");
-        primaryStage.setResizable(false); // Para evitar redimensionamiento
-        primaryStage.show();
-        
-        // Bucle de juego: se ejecuta cada frame (~60 veces por segundo)
+        // Mostrar la nueva escena
+        primaryStage.setScene(nuevaScene);
+
+        // Bucle del minijuego
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -69,7 +98,6 @@ public class Game extends Application {
             }
         };
         gameLoop.start();
-        
     }
 
     private void detectarColisionesLaberinto(LaberintoView laberintoView) {
@@ -105,6 +133,24 @@ public class Game extends Application {
         
         
     }
+    
+    
+    private void detectarColisionSalaInicial() {
+        Lumina lumina = salaInicialView.getLumina();
+
+        for (Rectangle pared : salaInicialView.getParedes()) {
+            if (lumina.getSprite().getBoundsInParent().intersects(pared.getBoundsInParent())) {
+                lumina.setColision(true);
+                return;
+            }
+        }
+
+        lumina.setColision(false);
+
+        // Además, verifica si entra a la puerta
+        salaInicialView.detectarPuertas();
+    }
+    
 
     public static void main(String[] args) {
         launch(args);
