@@ -1,6 +1,5 @@
 package jo.student.proyectof.entidades;
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
@@ -15,8 +14,8 @@ public abstract class Entidad {
         return new Rectangle(
         sprite.getLayoutX(),
         sprite.getLayoutY(),
-        sprite.getFitWidth(),      // ✅ Tamaño mostrado
-        sprite.getFitHeight()      // ✅ Tamaño mostrado
+        sprite.getFitWidth(),      // Tamaño mostrado
+        sprite.getFitHeight()      // Tamaño mostrado
          );
     }
 

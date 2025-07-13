@@ -1,104 +1,115 @@
 package jo.student.proyectof;
 
 // Librerías
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
-import javafx.application.Platform;
-import javafx.application.Application;
 import javafx.animation.AnimationTimer;
+import javafx.concurrent.Task;
 
-//clases del juego importadas
-
+// Clases del juego
 import jo.student.proyectof.entidades.Lumina;
-import jo.student.proyectof.entidades.Moneda;
+import jo.student.proyectof.entidades.Fragmentoalma;
 import jo.student.proyectof.interfaz.Controladores;
-import jo.student.proyectof.minijuegos.Laberinto;
+import jo.student.proyectof.interfaz.PantallaCarga;
 import jo.student.proyectof.minijuegos.LaberintoView;
 import jo.student.proyectof.minijuegos.SalaInicialView;
-import jo.student.proyectof.entidades.Fragmentoalma;
-import javafx.animation.Timeline;
 
 public class Game extends Application {
-    
-    
 
-    // ----------------------------------------
-    // CAMBIAR AQUÍ LA RESOLUCIÓN: Descomentando o comentando
-    // ----------------------------------------
-    
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
 
-    // private static final int WIDTH = 1280;
-    // private static final int HEIGHT = 720;
-    
     private boolean fragmentoRecogido = false;
     private Scene scene;
     private SalaInicialView salaInicialView;
-    private Stage primaryStage; // Guardar para poder cambiar escena más tarde
-    
+    private Stage primaryStage;
 
     @Override
-    
     public void start(Stage primaryStage) {
-        // Inicializar sala inicial
+        this.primaryStage = primaryStage;
+
+        // Mostrar pantalla de carga
+        PantallaCarga pantalla = new PantallaCarga(primaryStage);
+        pantalla.mostrar();
+
+        // Tarea de carga en segundo plano
+        Task<Void> tareaCarga = new Task<>() {
+            @Override
+            protected Void call() {
+                cargarJuego(); // Aquí puedes precargar recursos
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                mostrarJuego(primaryStage); // Mostrar juego luego de la carga
+            }
+        };
+
+        new Thread(tareaCarga).start();
+    }
+
+    private void cargarJuego() {
+        // Simula una carga lenta (puedes precargar imágenes, sonidos, etc.)
+        try {
+            Thread.sleep(1500); // 1.5 segundos de carga simulada
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mostrarJuego(Stage primaryStage) {
         salaInicialView = new SalaInicialView(WIDTH, HEIGHT);
         scene = new Scene(salaInicialView.getRoot(), WIDTH, HEIGHT);
 
-        // Configurar acciones al entrar en cada puerta
+        // Acción para puerta 1
         salaInicialView.setOnPuerta1(() -> lanzarMinijuegoLaberinto(primaryStage));
-        // salaInicialView.setOnPuerta2(() -> ... );
-        // salaInicialView.setOnPuerta3(() -> ... );
+        // Puedes configurar otras puertas aquí
 
-        // Controles para mover a Lumina
+        // Controles para Lumina
         Controladores controlesSala = new Controladores(
             salaInicialView.getLumina(),
-            () -> detectarColisionSalaInicial()
+            this::detectarColisionSalaInicial
         );
         controlesSala.configurarControles(scene);
 
-        // Configurar ventana
-        primaryStage.setTitle("Luminas quest");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
-        this.primaryStage = primaryStage;
+        // Mostrar escena del juego en el hilo de JavaFX
+        Platform.runLater(() -> {
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Lumina's Quest");
+            primaryStage.setResizable(false);
+            primaryStage.show();
+        });
     }
     
     
-    private void lanzarMinijuegoLaberinto(Stage primaryStage) {
-        LaberintoView laberintoView = new LaberintoView(WIDTH, HEIGHT);
-        Pane laberintoPane = laberintoView.getLaberintoPane();
+private void mostrarPantallaCargaYDespues(Runnable tareaCarga, Runnable accionFinal) {
+    PantallaCarga pantalla = new PantallaCarga(primaryStage);
+    pantalla.mostrar();
 
-        Scene nuevaScene = new Scene(laberintoPane, WIDTH, HEIGHT);
+    Task<Void> tarea = new Task<>() {
+        @Override
+        protected Void call() {
+            tareaCarga.run(); // lo que se carga
+            return null;
+        }
 
-        // Reutiliza controladores con verificación de colisión con paredes
-        Controladores controles = new Controladores(
-            laberintoView.getLumina(),
-            () -> detectarColisionesLaberinto(laberintoView)
-        );
-        controles.configurarControles(nuevaScene);
+        @Override
+        protected void succeeded() {
+            Platform.runLater(accionFinal); // lo que se hace al terminar
+        }
+    };
 
-        // Mostrar la nueva escena
-        primaryStage.setScene(nuevaScene);
+    new Thread(tarea).start();
+}
 
-        // Bucle del minijuego
-        AnimationTimer gameLoop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                laberintoView.moverRobotPorCamino();
-                laberintoView.verificarColisionRobotLumina();
-            }
-        };
-        gameLoop.start();
-    }
+
+
+
 
     private void detectarColisionesLaberinto(LaberintoView laberintoView) {
         Lumina lumina = laberintoView.getLumina();
@@ -108,17 +119,14 @@ public class Game extends Application {
             if (nodo instanceof Rectangle pared) {
                 if (lumina.getSprite().getBoundsInParent().intersects(pared.getBoundsInParent())) {
                     lumina.setColision(true);
-                    return; 
+                    return;
                 }
             }
         }
 
-        // Si no colisionó con ninguna
         lumina.setColision(false);
-        
-        
-        
-        // Detección con fragmento del alma
+
+        // Verifica si recoge el fragmento
         Fragmentoalma fragmento = laberintoView.getFragmentoalma();
         if (!fragmentoRecogido && fragmento != null &&
             lumina.getSprite().getBoundsInParent().intersects(fragmento.getSprite().getBoundsInParent())) {
@@ -128,12 +136,44 @@ public class Game extends Application {
             System.out.println("Has recogido el Fragmento del Alma!");
 
             laberintoView.mostrarRobotCentinela(); // Aparece el robot
-            laberintoView.marcarFragmentoRecogido(); // ← Notifica que debe empezar a moverse
+            laberintoView.marcarFragmentoRecogido(); // Comienza la persecución
         }
-        
-        
     }
+
     
+   private void lanzarMinijuegoLaberinto(Stage primaryStage) {
+    final LaberintoView[] laberintoViewRef = new LaberintoView[1]; // Para compartir entre hilos
+
+    mostrarPantallaCargaYDespues(
+        () -> { // tareaCarga (en segundo plano)
+            // Aquí se prepara el contenido en memoria (sin mostrar)
+            laberintoViewRef[0] = new LaberintoView(WIDTH, HEIGHT);
+        },
+        () -> { // accionFinal (en hilo de JavaFX)
+            LaberintoView laberintoView = laberintoViewRef[0];
+            Pane laberintoPane = laberintoView.getLaberintoPane();
+            Scene nuevaScene = new Scene(laberintoPane, WIDTH, HEIGHT);
+
+            Controladores controles = new Controladores(
+                laberintoView.getLumina(),
+                () -> detectarColisionesLaberinto(laberintoView)
+            );
+            controles.configurarControles(nuevaScene);
+
+            primaryStage.setScene(nuevaScene);
+
+            AnimationTimer gameLoop = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    laberintoView.moverRobotPorCamino();
+                    laberintoView.verificarColisionRobotLumina();
+                }
+            };
+            gameLoop.start();
+        }
+    );
+}
+
     
     private void detectarColisionSalaInicial() {
         Lumina lumina = salaInicialView.getLumina();
@@ -146,11 +186,8 @@ public class Game extends Application {
         }
 
         lumina.setColision(false);
-
-        // Además, verifica si entra a la puerta
-        salaInicialView.detectarPuertas();
+        salaInicialView.detectarPuertas(); // Verifica interacción con puertas
     }
-    
 
     public static void main(String[] args) {
         launch(args);
