@@ -16,7 +16,8 @@ public class Lumina extends Entidad{
     private int vidas = 3;
     private boolean colisionDetectada = false;
     private boolean invulnerable = false;
-    
+    private int monedasRecogidas = 0;
+
     public Lumina(){
         Image imagen = new Image(getClass().getResourceAsStream("/images/personaje.png"));
         this.sprite = new ImageView(imagen);
@@ -24,6 +25,13 @@ public class Lumina extends Entidad{
         this.sprite.setFitHeight(50);
         this.sprite.setLayoutX(0);
         this.sprite.setLayoutY(256);
+    }
+    public int getMonedasRecogidas() {
+    return monedasRecogidas;
+    }
+
+    public void sumarMoneda() {
+    monedasRecogidas++;
     }
     
     @Override
@@ -41,7 +49,7 @@ public class Lumina extends Entidad{
         invulnerable = true;
         new Thread(() -> {
             try {
-                Thread.sleep(3000); // 3 segundos
+                Thread.sleep(2000); // 3 segundos
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -75,14 +83,3 @@ public class Lumina extends Entidad{
     }
         
 }
-
-/*public void perderVida() {
-        if (vidas > 0) {
-            vidas--;
-            System.out.println("Lumina perdio una vida. Vidas restantes: " + vidas);
-            if (vidas == 0) {
-                System.out.println("¡Lumina ha perdido todas sus vidas!");
-                // Aquí puedes agregar lógica de fin del juego
-            }
-        }
-    }*/

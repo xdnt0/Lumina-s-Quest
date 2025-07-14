@@ -12,8 +12,8 @@ public class Moneda extends Entidad {
     public Moneda(double x, double y) {
         Image img = new Image(getClass().getResourceAsStream("/images/moneda.png"));
         sprite = new ImageView(img);
-        this.sprite.setFitWidth(32);   // ancho deseado (en píxeles)
-        this.sprite.setFitHeight(32);
+        this.sprite.setFitWidth(64);   // ancho deseado (en píxeles)
+        this.sprite.setFitHeight(64);
         sprite.setLayoutX(x);
         sprite.setLayoutY(y);
     }

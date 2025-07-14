@@ -13,7 +13,8 @@ import javafx.concurrent.Task;
 // Clases del juego
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
-import jo.student.proyectof.interfaz.Controladores;
+import jo.student.proyectof.entidades.Moneda;
+import jo.student.proyectof.utilidades.Controladores;
 import jo.student.proyectof.interfaz.PantallaCarga;
 import jo.student.proyectof.minijuegos.LaberintoView;
 import jo.student.proyectof.minijuegos.SalaInicialView;

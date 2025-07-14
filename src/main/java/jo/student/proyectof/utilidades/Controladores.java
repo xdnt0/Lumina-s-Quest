@@ -1,4 +1,4 @@
-package jo.student.proyectof.interfaz;
+package jo.student.proyectof.utilidades;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;

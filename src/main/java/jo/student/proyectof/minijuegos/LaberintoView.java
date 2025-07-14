@@ -10,21 +10,25 @@ import javafx.scene.shape.Rectangle;
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
 import jo.student.proyectof.entidades.Enemigos;
+import jo.student.proyectof.entidades.Moneda;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.AnimationTimer;
+import jo.student.proyectof.utilidades.Colisiones;
 
 public class LaberintoView {
 
-    private Pane laberintoPane;
-    private Lumina lumina;
-    private Fragmentoalma fragmentoalma;
-    private Enemigos robotCentinela;
-    private boolean fragmentoRecogido = false;
-    private int puntoActual = 0;
-
-    private List<double[]> caminoRobot;
-    private List<ImageView> corazones = new ArrayList<>();
+private Pane laberintoPane;
+private Lumina lumina;
+private Fragmentoalma fragmentoalma;
+private Enemigos robotCentinela;
+private List<Moneda> monedas = new ArrayList<>(); // <-- ESTA FALTABA
+private boolean fragmentoRecogido = false;
+private int puntoActual = 0;
+private List<double[]> caminoRobot;
+private List<ImageView> corazones = new ArrayList<>();
 
     public LaberintoView(int width, int height) {
         laberintoPane = new Pane();
@@ -33,8 +37,9 @@ public class LaberintoView {
         inicializarFondoYLumina();
         inicializarHUD();
         inicializarCaminoRobot();
-
+        inicializarMonedas(); // llamada para que se agreguen las monedas
         Platform.runLater(this::inicializarParedes);
+        gameLoop.start();
     }
 
     private void inicializarFondoYLumina() {
@@ -105,6 +110,32 @@ public class LaberintoView {
         caminoRobot.add(new double[]{80, 380});
         caminoRobot.add(new double[]{24, 380});
     }
+    public List<Moneda> getMonedas() {
+    return monedas;
+        }
+    AnimationTimer gameLoop = new AnimationTimer() {
+    @Override
+    public void handle(long now) {
+        moverRobotPorCamino();
+        verificarColisionRobotLumina();
+        Colisiones.verificarMonedas(lumina, monedas, laberintoPane);
+    }
+};
+    
+    private void inicializarMonedas() {
+    double[][] posiciones = {
+        {1270, 800},
+        {685, 300},
+        {455, 160}
+    };
+
+    for (double[] pos : posiciones) {
+        Moneda m = new Moneda(pos[0], pos[1]);
+        monedas.add(m);
+        laberintoPane.getChildren().add(m.getSprite());
+    }
+}
+
 
     public void moverRobotPorCamino() {
         if (robotCentinela != null && fragmentoRecogido && puntoActual < caminoRobot.size()) {
@@ -184,6 +215,3 @@ public class LaberintoView {
         return lumina;
     }
 }
-
-
-
