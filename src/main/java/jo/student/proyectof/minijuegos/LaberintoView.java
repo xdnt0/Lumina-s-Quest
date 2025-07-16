@@ -143,7 +143,7 @@ private List<ImageView> corazones = new ArrayList<>();
             double x = objetivo[0];
             double y = objetivo[1];
 
-            robotCentinela.moverHacia(x, y, 2.2);
+            robotCentinela.moverHacia(x, y, 1.2);
 
             double dx = Math.abs(robotCentinela.getX() - x);
             double dy = Math.abs(robotCentinela.getY() - y);
