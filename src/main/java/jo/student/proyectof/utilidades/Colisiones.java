@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 
 import java.util.Iterator;
 import java.util.List;
+import javafx.scene.Node;
 
 public class Colisiones {
 
@@ -25,4 +26,13 @@ public class Colisiones {
             }
         }
     }
+    public static boolean colisionConParedes(Node jugador, List<Node> paredes) {
+    for (Node pared : paredes) {
+        if (jugador.getBoundsInParent().intersects(pared.getBoundsInParent())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 }

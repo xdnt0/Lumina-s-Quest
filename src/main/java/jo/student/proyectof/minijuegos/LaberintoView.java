@@ -1,7 +1,6 @@
-
 package jo.student.proyectof.minijuegos;
 
-import javafx.application.Platform;
+import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -11,24 +10,22 @@ import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
 import jo.student.proyectof.entidades.Enemigos;
 import jo.student.proyectof.entidades.Moneda;
-
+import jo.student.proyectof.utilidades.Colisiones;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.animation.AnimationTimer;
-import jo.student.proyectof.utilidades.Colisiones;
 
 public class LaberintoView {
 
-private Pane laberintoPane;
-private Lumina lumina;
-private Fragmentoalma fragmentoalma;
-private Enemigos robotCentinela;
-private List<Moneda> monedas = new ArrayList<>(); // <-- ESTA FALTABA
-private boolean fragmentoRecogido = false;
-private int puntoActual = 0;
-private List<double[]> caminoRobot;
-private List<ImageView> corazones = new ArrayList<>();
+    private Pane laberintoPane;
+    private Lumina lumina;
+    private Fragmentoalma fragmentoalma;
+    private Enemigos robotCentinela;
+    private List<Moneda> monedas = new ArrayList<>();
+    private List<ImageView> corazones = new ArrayList<>();
+    private boolean fragmentoRecogido = false;
+    private int puntoActual = 0;
+    private List<double[]> caminoRobot;
 
     public LaberintoView(int width, int height) {
         laberintoPane = new Pane();
@@ -37,8 +34,9 @@ private List<ImageView> corazones = new ArrayList<>();
         inicializarFondoYLumina();
         inicializarHUD();
         inicializarCaminoRobot();
-        inicializarMonedas(); // llamada para que se agreguen las monedas
-        Platform.runLater(this::inicializarParedes);
+        inicializarMonedas();
+        inicializarParedes(); // ✅ corregido: marca paredes con clase "pared"
+
         gameLoop.start();
     }
 
@@ -77,12 +75,13 @@ private List<ImageView> corazones = new ArrayList<>();
             {1007, 364, 22, 107}, {1525, 41, 215, 55}
         };
 
-        for (int[] datos : paredesData) {
-            Rectangle pared = new Rectangle(datos[2], datos[3]);
-            pared.setX(datos[0]);
-            pared.setY(datos[1]);
-            pared.setFill(Color.rgb(255, 255, 255, 0.0));
-            laberintoPane.getChildren().add(pared);
+            for (int[] datos : paredesData) {
+        Rectangle pared = new Rectangle(datos[2], datos[3]);
+        pared.setX(datos[0]);
+        pared.setY(datos[1]);
+        pared.setFill(Color.rgb(255, 255, 255, 0.0));
+        pared.setUserData("pared"); // ✅ en lugar de usar CSS
+        laberintoPane.getChildren().add(pared);
         }
     }
 
@@ -110,32 +109,47 @@ private List<ImageView> corazones = new ArrayList<>();
         caminoRobot.add(new double[]{80, 380});
         caminoRobot.add(new double[]{24, 380});
     }
-    public List<Moneda> getMonedas() {
-    return monedas;
-        }
-    AnimationTimer gameLoop = new AnimationTimer() {
-    @Override
-    public void handle(long now) {
-        moverRobotPorCamino();
-        verificarColisionRobotLumina();
-        Colisiones.verificarMonedas(lumina, monedas, laberintoPane);
-    }
-};
-    
+
     private void inicializarMonedas() {
-    double[][] posiciones = {
-        {1270, 800},
-        {685, 300},
-        {455, 160}
-    };
+        double[][] posiciones = {
+            {1270, 800},
+            {685, 300},
+            {455, 160}
+        };
 
-    for (double[] pos : posiciones) {
-        Moneda m = new Moneda(pos[0], pos[1]);
-        monedas.add(m);
-        laberintoPane.getChildren().add(m.getSprite());
+        for (double[] pos : posiciones) {
+            Moneda m = new Moneda(pos[0], pos[1]);
+            monedas.add(m);
+            laberintoPane.getChildren().add(m.getSprite());
+        }
     }
-}
 
+    private void inicializarHUD() {
+        Image corazonImg = new Image(getClass().getResourceAsStream("/images/corazon.png"));
+        for (int i = 0; i < lumina.getVidas(); i++) {
+            ImageView corazon = new ImageView(corazonImg);
+            corazon.setFitWidth(40);
+            corazon.setFitHeight(40);
+            corazon.setX(20 + i * 50);
+            corazon.setY(20);
+            corazones.add(corazon);
+            laberintoPane.getChildren().add(corazon);
+        }
+    }
+
+    private void actualizarCorazones() {
+        for (int i = 0; i < corazones.size(); i++) {
+            corazones.get(i).setVisible(i < lumina.getVidas());
+        }
+    }
+
+    public void mostrarRobotCentinela() {
+        if (robotCentinela == null) {
+            robotCentinela = new Enemigos(1490, 800);
+            laberintoPane.getChildren().add(robotCentinela.getSprite());
+            puntoActual = 0;
+        }
+    }
 
     public void moverRobotPorCamino() {
         if (robotCentinela != null && fragmentoRecogido && puntoActual < caminoRobot.size()) {
@@ -165,31 +179,8 @@ private List<ImageView> corazones = new ArrayList<>();
         }
     }
 
-    public void mostrarRobotCentinela() {
-        if (robotCentinela == null) {
-            robotCentinela = new Enemigos(1490, 800);
-            laberintoPane.getChildren().add(robotCentinela.getSprite());
-            puntoActual = 0;
-        }
-    }
-
-    private void inicializarHUD() {
-        Image corazonImg = new Image(getClass().getResourceAsStream("/images/corazon.png"));
-        for (int i = 0; i < lumina.getVidas(); i++) {
-            ImageView corazon = new ImageView(corazonImg);
-            corazon.setFitWidth(40);
-            corazon.setFitHeight(40);
-            corazon.setX(20 + i * 50);
-            corazon.setY(20);
-            corazones.add(corazon);
-            laberintoPane.getChildren().add(corazon);
-        }
-    }
-
-    private void actualizarCorazones() {
-        for (int i = 0; i < corazones.size(); i++) {
-            corazones.get(i).setVisible(i < lumina.getVidas());
-        }
+    public List<Moneda> getMonedas() {
+        return monedas;
     }
 
     public Fragmentoalma getFragmentoalma() {
@@ -214,4 +205,13 @@ private List<ImageView> corazones = new ArrayList<>();
     public Lumina getLumina() {
         return lumina;
     }
+
+    AnimationTimer gameLoop = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            moverRobotPorCamino();
+            verificarColisionRobotLumina();
+            Colisiones.verificarMonedas(lumina, monedas, laberintoPane);
+        }
+    };
 }
