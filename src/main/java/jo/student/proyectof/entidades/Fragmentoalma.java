@@ -22,7 +22,6 @@ public class Fragmentoalma extends Entidad {
     private Timeline animacion;
 
     public Fragmentoalma(double x, double y) {
-        // Cargar los frames desde /images/fragmento/frame1.png ... frameN.png
        int totalFrames = 7;
 
 for (int i = 1; i <= totalFrames; i++) {

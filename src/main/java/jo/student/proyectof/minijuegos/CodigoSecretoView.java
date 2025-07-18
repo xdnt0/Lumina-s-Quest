@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jo.student.proyectof.minijuegos;
 
 import javafx.scene.image.Image;
@@ -29,11 +25,13 @@ public class CodigoSecretoView {
         root = new Pane();
         root.setPrefSize(width, height);
         inicializarVista();
+        System.out.println("CodigoSecretoView cargado con " + root.getChildren().size() + " nodos.");
+
     }
 
     private void inicializarVista() {
         //Fondo
-        Image fondo = new Image(getClass().getResourceAsStream("/images/salaPrincipal.png"));
+        Image fondo = new Image(getClass().getResourceAsStream("/images/Biblioteca.png"));
         ImageView fondoView = new ImageView(fondo);
         root.getChildren().add(fondoView);
 
@@ -95,5 +93,4 @@ public class CodigoSecretoView {
         return lumina;
     }
     
-    //Falta agregar lo del fragmento del alma en cuento el código esté correcto
 }

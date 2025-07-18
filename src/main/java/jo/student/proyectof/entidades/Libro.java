@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jo.student.proyectof.entidades;
 
 import javafx.geometry.Bounds;
@@ -23,7 +19,7 @@ public class Libro extends Entidad{
 
     public Libro(double x, double y, String pista) {
         this.pista = pista;
-        Image img = new Image(getClass().getResourceAsStream("/images/libro.png"));
+        Image img = new Image(getClass().getResourceAsStream("/images/libro/Libro1.png"));
         this.sprite = new ImageView(img);
         this.sprite.setLayoutX(x);
         this.sprite.setLayoutY(y);

@@ -39,9 +39,13 @@ public class SalaInicialView {
         root.getChildren().add(lumina.getSprite());
 
         // 3. Puerta invisible para detección (NO bloquear el paso)
-        puerta1 = new Rectangle(145, 151, 152, 73);
+        puerta1 = new Rectangle(145, 150, 152, 73);
         puerta1.setOpacity(0.0);
         root.getChildren().add(puerta1);
+        
+         puerta2 = new Rectangle(800, 150, 140, 70);
+        puerta2.setOpacity(0.0);
+        root.getChildren().add(puerta2);
 
         // 4. Paredes que SÍ bloquean el movimiento
         int[][] paredesData = {
@@ -74,12 +78,17 @@ public class SalaInicialView {
     public void detectarPuertas() {
         if (lumina.getSprite().getBoundsInParent().intersects(puerta1.getBoundsInParent())) {
             if (onPuerta1 != null) {
-    // Ejecuta el cambio de escena fuera del ciclo de animación
-    javafx.application.Platform.runLater(onPuerta1);
-}
+                javafx.application.Platform.runLater(onPuerta1);
+            }
+        }
 
+        if (lumina.getSprite().getBoundsInParent().intersects(puerta2.getBoundsInParent())) {
+            if (onPuerta2 != null) {
+                javafx.application.Platform.runLater(onPuerta2);
+            }
         }
     }
+
 
     public Pane getRoot() {
         return root;
@@ -88,10 +97,12 @@ public class SalaInicialView {
     public Lumina getLumina() {
         return lumina;
     }
-public Rectangle getPuerta1() {
-    return puerta1;
-}
-
+    public Rectangle getPuerta1() {
+        return puerta1;
+    }
+    public Rectangle getPuerta2() {
+        return puerta2;
+    }
     public void setOnPuerta1(Runnable r) {
         this.onPuerta1 = r;
     }

@@ -15,6 +15,7 @@ import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
 import jo.student.proyectof.utilidades.Controladores;
 import jo.student.proyectof.interfaz.PantallaCarga;
+import jo.student.proyectof.minijuegos.CodigoSecretoView;
 import jo.student.proyectof.minijuegos.LaberintoView;
 import jo.student.proyectof.minijuegos.SalaInicialView;
 
@@ -26,6 +27,7 @@ public class Game extends Application {
     private boolean fragmentoRecogido = false;
     private Scene scene;
     private SalaInicialView salaInicialView;
+    private boolean minijuegoCodigoSecreto = false;
     private Stage primaryStage;
 
     @Override
@@ -67,6 +69,7 @@ public class Game extends Application {
 
         // Acción para puerta 1
         salaInicialView.setOnPuerta1(() -> lanzarMinijuegoLaberinto(primaryStage));
+        salaInicialView.setOnPuerta2(() -> cargarMinijuegoCodigoSecreto(primaryStage));
 
         // Controles para Lumina con detección automática de paredes
         Controladores controlesSala = new Controladores(
@@ -161,12 +164,41 @@ public class Game extends Application {
         salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
             salaInicialView.getPuerta1().getBoundsInParent())) {
 
-        minijuegoLaberintoLanzado = true; // 🚫 evita reentrada
+        minijuegoLaberintoLanzado = true; // evita reentrada
         Platform.runLater(() -> lanzarMinijuegoLaberinto(primaryStage));
     }
-    
+    if (!minijuegoCodigoSecreto &&
+    salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
+        salaInicialView.getPuerta2().getBoundsInParent())) {
+    minijuegoCodigoSecreto = true;
+    Platform.runLater(() -> cargarMinijuegoCodigoSecreto(primaryStage));
+    }
+
  }
 
+        private void cargarMinijuegoCodigoSecreto(Stage stage) {
+        PantallaCarga carga = new PantallaCarga(stage);
+        carga.mostrar();
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            CodigoSecretoView vista = new CodigoSecretoView(WIDTH, HEIGHT);
+            Platform.runLater(() -> {
+                Scene escena = new Scene(vista.getRoot());
+                Controladores control = new Controladores(vista.getLumina(), vista::InteraccionLibrosPinpad, vista.getRoot());
+                control.configurarControles(escena);
+                stage.setScene(escena);
+                stage.show();
+            });
+        }).start();
+    }
+
+    
     public static void main(String[] args) {
         launch(args);
     }
