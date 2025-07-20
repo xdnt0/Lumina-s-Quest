@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 public class Enemigos extends Entidad {
 
     public Enemigos(double x, double y) {
-        Image img = new Image(getClass().getResourceAsStream("/images/robotCentinela.png"));
+        Image img = new Image(getClass().getResourceAsStream("/images/entidades/robotCentinela.png"));
         this.sprite = new ImageView(img);
         this.sprite.setFitWidth(50);  // Ajusta tamaño si es necesario
         this.sprite.setFitHeight(50);

@@ -19,7 +19,7 @@ public class Lumina extends Entidad{
     private int monedasRecogidas = 0;
 
     public Lumina(){
-        Image imagen = new Image(getClass().getResourceAsStream("/images/personaje.png"));
+        Image imagen = new Image(getClass().getResourceAsStream("/images/entidades/personaje.png"));
         this.sprite = new ImageView(imagen);
         this.sprite.setFitWidth(50);   // ancho deseado (en píxeles)
         this.sprite.setFitHeight(50);
