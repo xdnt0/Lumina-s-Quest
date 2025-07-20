@@ -31,7 +31,7 @@ public class CodigoSecretoView {
 
     private void inicializarVista() {
         //Fondo
-        Image fondo = new Image(getClass().getResourceAsStream("/images/Biblioteca.png"));
+        Image fondo = new Image(getClass().getResourceAsStream("/images/minijuegos/2/Biblioteca.png"));
         ImageView fondoView = new ImageView(fondo);
         root.getChildren().add(fondoView);
 

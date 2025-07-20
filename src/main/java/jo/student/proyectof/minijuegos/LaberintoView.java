@@ -41,7 +41,7 @@ public class LaberintoView {
     }
 
     private void inicializarFondoYLumina() {
-        Image imagenMapa = new Image(getClass().getResourceAsStream("/images/laberinto.png"));
+        Image imagenMapa = new Image(getClass().getResourceAsStream("/images/minijuegos/1/laberinto.png"));
         ImageView fondoMapa = new ImageView(imagenMapa);
         laberintoPane.getChildren().add(fondoMapa);
 
