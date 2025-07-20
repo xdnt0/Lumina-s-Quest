@@ -6,7 +6,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.Node; // ✅ este es el bueno
+import javafx.scene.Node;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
 
@@ -18,16 +18,18 @@ import jo.student.proyectof.interfaz.PantallaCarga;
 import jo.student.proyectof.minijuegos.CodigoSecretoView;
 import jo.student.proyectof.minijuegos.LaberintoView;
 import jo.student.proyectof.minijuegos.SalaInicialView;
+import jo.student.proyectof.minijuegos.LaserRoomView;
 
 public class Game extends Application {
 
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
-    private boolean minijuegoLaberintoLanzado = false;
-    private boolean fragmentoRecogido = false;
     private Scene scene;
     private SalaInicialView salaInicialView;
+    private boolean minijuegoLaberintoLanzado = false;
+    private boolean fragmentoRecogido = false;
     private boolean minijuegoCodigoSecreto = false;
+    private boolean minijuegoLaserRoom = false;
     private Stage primaryStage;
 
     @Override
@@ -70,6 +72,7 @@ public class Game extends Application {
         // Acción para puerta 1
         salaInicialView.setOnPuerta1(() -> lanzarMinijuegoLaberinto(primaryStage));
         salaInicialView.setOnPuerta2(() -> cargarMinijuegoCodigoSecreto(primaryStage));
+        salaInicialView.setOnPuerta3(() -> lanzarMinijuegoLaserRoom(primaryStage));
 
         // Controles para Lumina con detección automática de paredes
         Controladores controlesSala = new Controladores(
@@ -106,7 +109,28 @@ public class Game extends Application {
 
         new Thread(tarea).start();
     }
+    public void detectarColisionSalaInicial() {
+    if (!minijuegoLaberintoLanzado &&
+        salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
+        salaInicialView.getPuerta1().getBoundsInParent())) {
 
+        minijuegoLaberintoLanzado = true; // evita reentrada
+        Platform.runLater(() -> lanzarMinijuegoLaberinto(primaryStage));
+    }
+    if (!minijuegoCodigoSecreto &&
+        salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
+        salaInicialView.getPuerta2().getBoundsInParent())) {
+        minijuegoCodigoSecreto = true;
+    Platform.runLater(() -> cargarMinijuegoCodigoSecreto(primaryStage));
+    }
+    if (!minijuegoLaserRoom &&
+        salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
+        salaInicialView.getPuerta3().getBoundsInParent())) {
+        minijuegoLaserRoom = true;
+        Platform.runLater(() -> lanzarMinijuegoLaserRoom(primaryStage));
+    }
+
+ }
     private void lanzarMinijuegoLaberinto(Stage primaryStage) {
         final LaberintoView[] laberintoViewRef = new LaberintoView[1];
 
@@ -159,23 +183,6 @@ public class Game extends Application {
         }
     }
 
-    public void detectarColisionSalaInicial() {
-    if (!minijuegoLaberintoLanzado &&
-        salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
-            salaInicialView.getPuerta1().getBoundsInParent())) {
-
-        minijuegoLaberintoLanzado = true; // evita reentrada
-        Platform.runLater(() -> lanzarMinijuegoLaberinto(primaryStage));
-    }
-    if (!minijuegoCodigoSecreto &&
-    salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
-        salaInicialView.getPuerta2().getBoundsInParent())) {
-    minijuegoCodigoSecreto = true;
-    Platform.runLater(() -> cargarMinijuegoCodigoSecreto(primaryStage));
-    }
-
- }
-
         private void cargarMinijuegoCodigoSecreto(Stage stage) {
         PantallaCarga carga = new PantallaCarga(stage);
         carga.mostrar();
@@ -197,8 +204,26 @@ public class Game extends Application {
             });
         }).start();
     }
+private void lanzarMinijuegoLaserRoom(Stage stage) {
+    PantallaCarga carga = new PantallaCarga(stage);
+    carga.mostrar();
 
-    
+    new Thread(() -> {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Platform.runLater(() -> {
+            LaserRoomView vista = new LaserRoomView(stage);
+            // La clase LaserRoomView ya hace stage.setScene(...) internamente.
+            // Por eso NO necesitamos crear otra Scene ni agregar Controladores aquí.
+        });
+    }).start();
+}
+
+
     public static void main(String[] args) {
         launch(args);
     }

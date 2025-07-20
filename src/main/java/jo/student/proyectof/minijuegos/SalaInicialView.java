@@ -43,9 +43,15 @@ public class SalaInicialView {
         puerta1.setOpacity(0.0);
         root.getChildren().add(puerta1);
         
-         puerta2 = new Rectangle(800, 150, 140, 70);
+        puerta2 = new Rectangle(800, 150, 140, 70);
         puerta2.setOpacity(0.0);
         root.getChildren().add(puerta2);
+
+        puerta3 = new Rectangle(400, 800, 140, 70); // al lado de Lumina
+puerta3.setFill(Color.RED); // visible
+puerta3.setOpacity(0.5);
+root.getChildren().add(puerta3);
+
 
         // 4. Paredes que SÍ bloquean el movimiento
         int[][] paredesData = {
@@ -87,6 +93,12 @@ public class SalaInicialView {
                 javafx.application.Platform.runLater(onPuerta2);
             }
         }
+        if (lumina.getSprite().getBoundsInParent().intersects(puerta3.getBoundsInParent())) {
+        if (onPuerta3 != null) {
+            javafx.application.Platform.runLater(onPuerta3);
+            }
+        }
+
     }
 
 
@@ -102,6 +114,9 @@ public class SalaInicialView {
     }
     public Rectangle getPuerta2() {
         return puerta2;
+    }
+    public Rectangle getPuerta3() {
+    return puerta3;
     }
     public void setOnPuerta1(Runnable r) {
         this.onPuerta1 = r;
