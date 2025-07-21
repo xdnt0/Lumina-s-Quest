@@ -195,7 +195,7 @@ public class Game extends Application {
         }
     }
 
-    private void cargarMinijuegoCodigoSecreto(Stage stage) {
+private void cargarMinijuegoCodigoSecreto(Stage stage) {
         PantallaCarga carga = new PantallaCarga(stage);
         carga.mostrar();
 
@@ -249,16 +249,24 @@ public class Game extends Application {
         }).start();
     }
 
-    private void verificarFragmentoAlma(CodigoSecretoView vista) {
-        if (vista.getFragmentoAlma() != null &&
-            vista.getFragmentoAlma().getSprite().isVisible() &&
-            vista.getLumina().getSprite().getBoundsInParent()
-                .intersects(vista.getFragmentoAlma().getSprite().getBoundsInParent())) {
 
-            vista.getRoot().getChildren().remove(vista.getFragmentoAlma().getSprite());
-            fragmentoRecogido = true;
-            System.out.println("Has recogido el Fragmento del Alma!");
-            new java.util.Timer().schedule(new java.util.TimerTask() {
+private void verificarFragmentoAlma(CodigoSecretoView vista) {
+    if (vista.getFragmentoAlma() != null &&
+        vista.getFragmentoAlma().getSprite().isVisible() &&
+        vista.getLumina().getSprite().getBoundsInParent()
+            .intersects(vista.getFragmentoAlma().getSprite().getBoundsInParent())) {
+
+        vista.getRoot().getChildren().remove(vista.getFragmentoAlma().getSprite());
+        
+        //Marcar como recogido en el m inijuego
+        vista.getFragmentoAlma().setRecogido(true);
+        fragmentoRecogido = true;
+
+        System.out.println("Has recogido el Fragmento del Alma!");
+        
+        //Volver a sala principal después de 2 segundos
+        new java.util.Timer().schedule(
+            new java.util.TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
@@ -266,11 +274,14 @@ public class Game extends Application {
                         mostrarJuego(primaryStage);
                     });
                 }
-            }, 2000);
-        }
+            }, 
+            2000
+        );
     }
+}
 
-    private void lanzarMinijuegoLaserRoom(Stage stage) {
+
+private void lanzarMinijuegoLaserRoom(Stage stage) {
         PantallaCarga carga = new PantallaCarga(stage);
         carga.mostrar();
 

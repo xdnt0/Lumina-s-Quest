@@ -113,39 +113,37 @@ public class CodigoSecretoView {
     }
 }
 
-private void mostrarFragmentoAlma() {
-    if (fragmentoAlma == null) {
-        fragmentoAlma = new Fragmentoalma(
-            pinPad.getAreaInteraccion().getX() + 100,  // Posición X relativa al pinpad
-            pinPad.getAreaInteraccion().getY() - 100   // Posición Y relativa al pinpad
-        );
-        root.getChildren().add(fragmentoAlma.getSprite());
+public void mostrarFragmentoAlma() {
+    //Solo mostrar si no ha sido recogido
+    if (!fragmentoAlma.isRecogido()) {
+        fragmentoAlma.getSprite().setVisible(true);
+        
+        //Animación
+        fragmentoAlma.getSprite().setScaleX(0);
+        fragmentoAlma.getSprite().setScaleY(0);
+        
+        new Timeline(
+            new KeyFrame(Duration.seconds(0.5),
+                new KeyValue(fragmentoAlma.getSprite().scaleXProperty(), 1),
+                new KeyValue(fragmentoAlma.getSprite().scaleYProperty(), 1)
+            )
+        ).play();
     }
-    fragmentoAlma.getSprite().setVisible(true);
-    // Animación de aparición
-    fragmentoAlma.getSprite().setScaleX(0);
-    fragmentoAlma.getSprite().setScaleY(0);
-    new Timeline(
-        new KeyFrame(Duration.seconds(0.5),
-            new KeyValue(fragmentoAlma.getSprite().scaleXProperty(), 1),
-            new KeyValue(fragmentoAlma.getSprite().scaleYProperty(), 1)
-        )
-    ).play();
 }
 
-    public Fragmentoalma getFragmentoAlma() {
+public Fragmentoalma getFragmentoAlma() {
         return fragmentoAlma;
     }
     
-    public Pane getRoot() {
+public Pane getRoot() {
         return root;
     }
 
-    public Lumina getLumina() {
+public Lumina getLumina() {
         return lumina;
     }
     
-    public PinPad getPinPad() {
+public PinPad getPinPad() {
     return pinPad;
     }
 }
