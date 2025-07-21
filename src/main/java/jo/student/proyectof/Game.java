@@ -31,6 +31,7 @@ public class Game extends Application {
     private boolean minijuegoLaberintoLanzado = false;
     private boolean fragmentoRecogido = false;
     private boolean minijuegoCodigoSecreto = false;
+    private boolean codigoSecretoCompletado = false;
     private boolean minijuegoLaserRoom = false;
     private Stage primaryStage;
 
@@ -128,7 +129,7 @@ public class Game extends Application {
             minijuegoLaberintoLanzado = true;
             Platform.runLater(() -> lanzarMinijuegoLaberinto(primaryStage));
         }
-        if (!minijuegoCodigoSecreto &&
+        if (!minijuegoCodigoSecreto && !codigoSecretoCompletado &&
             salaInicialView.getLumina().getSprite().getBoundsInParent().intersects(
                 salaInicialView.getPuerta2().getBoundsInParent())) {
 
@@ -268,6 +269,7 @@ private void verificarFragmentoAlma(CodigoSecretoView vista) {
         //Marcar como recogido en el m inijuego
         vista.getFragmentoAlma().setRecogido(true);
         fragmentoRecogido = true;
+        codigoSecretoCompletado = true; // Marcar como completado
 
         System.out.println("Has recogido el Fragmento del Alma!");
         
