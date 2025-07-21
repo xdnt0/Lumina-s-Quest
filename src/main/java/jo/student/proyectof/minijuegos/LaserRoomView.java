@@ -59,7 +59,7 @@ public class LaserRoomView {
     }
 
     private void inicializarFondo() {
-        Image fondo = new Image(getClass().getResourceAsStream("/images/minijuegos/3/11.png"));
+        Image fondo = new Image(getClass().getResourceAsStream("/images/minijuegos/3/LaserRoom.png"));
         ImageView fondoView = new ImageView(fondo);
         root.getChildren().add(fondoView);
     }
@@ -72,22 +72,26 @@ public class LaserRoomView {
     }
 
     private void inicializarLasers() {
-        Image imgActiva = new Image(getClass().getResourceAsStream("/images/balatro.png"));
-        Image imgInactiva = new Image(getClass().getResourceAsStream("/images/balatro.png"));
+    Image imgActiva = new Image(getClass().getResourceAsStream("/images/laser.png"));
+    Image imgInactiva = new Image(getClass().getResourceAsStream("/images/laser.png"));
 
-        for (int i = 0; i < 4; i++) {
-            int y = 200 + i * 150;
-            Laser laser = new Laser(900, y, imgActiva, imgInactiva);
-            lasers.add(laser);
-            root.getChildren().add(laser.getSprite());
+    Laser laser1 = new Laser(900, 430, imgActiva, imgInactiva);
+    Laser laser2 = new Laser(580, 430, imgActiva, imgInactiva);
+    Laser laser3 = new Laser(800, 1080, imgActiva, imgInactiva);
+    Laser laser4 = new Laser(950, 1080, imgActiva, imgInactiva);
 
-            // Agregar hitbox invisible como pared para el sistema de colisión (opcional)
-            Rectangle colisionBox = new Rectangle(900, y, 64, 64);
-            colisionBox.setFill(Color.TRANSPARENT);
-            colisionBox.setUserData("pared");
-            root.getChildren().add(colisionBox);
+    lasers.add(laser1);
+    lasers.add(laser2);
+    lasers.add(laser3);
+    lasers.add(laser4);
+
+    // Agregar cada láser y su hitbox al root
+    for (Laser laser : lasers) {
+        root.getChildren().add(laser.getSprite());
+        root.getChildren().add(laser.getHitbox());
         }
     }
+
 
     private void inicializarFragmento() {
         fragmentoalma = new Fragmentoalma(1700, 400);
@@ -132,6 +136,7 @@ public class LaserRoomView {
         if (!fragmentoalma.isRecogido() &&
             lumina.getSprite().getBoundsInParent().intersects(fragmentoalma.getSprite().getBoundsInParent())) {
             fragmentoalma.setRecogido(true);
+            root.getChildren().remove(fragmentoalma.getSprite());
             System.out.println("Lúmina obtenida");
         }
     }
