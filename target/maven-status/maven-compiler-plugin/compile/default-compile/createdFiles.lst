@@ -13,6 +13,8 @@ jo\student\proyectof\Game$3.class
 jo\student\proyectof\Game$1.class
 jo\student\proyectof\entidades\Enemigos.class
 jo\student\proyectof\minijuegos\Minijuegos.class
+jo\student\proyectof\Game$4.class
+jo\student\proyectof\minijuegos\CodigoSecretoView$1.class
 jo\student\proyectof\minijuegos\SalaInicialView.class
 jo\student\proyectof\entidades\Libro.class
 jo\student\proyectof\entidades\Laser.class
@@ -24,5 +26,6 @@ jo\student\proyectof\entidades\Vendedor.class
 module-info.class
 jo\student\proyectof\Game.class
 jo\student\proyectof\minijuegos\LaberintoView.class
+jo\student\proyectof\Game$5.class
 jo\student\proyectof\tienda\Tienda.class
 jo\student\proyectof\Game$2.class
