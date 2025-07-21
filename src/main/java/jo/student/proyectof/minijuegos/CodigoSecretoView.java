@@ -26,6 +26,7 @@ public class CodigoSecretoView {
     private List<Libro> libros = new ArrayList<>();
     private Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),24);
     private Fragmentoalma fragmentoAlma;
+    private List<Moneda> monedas = new ArrayList<>();
 
     public CodigoSecretoView(int width, int height) {
         root = new Pane();
@@ -33,6 +34,7 @@ public class CodigoSecretoView {
         inicializarVista();
         System.out.println("CodigoSecretoView cargado con " + root.getChildren().size() + " nodos.");
         inicializarParedes();
+        inicializarMonedas();
 
     }
 
@@ -78,15 +80,28 @@ public class CodigoSecretoView {
 
         for (int[] datos : paredesData) {
             Rectangle pared = new Rectangle(datos[2], datos[3]); // ancho, alto
-            pared.setX(datos[0]); // x
-            pared.setY(datos[1]); // y
-            pared.setFill(Color.rgb(255, 255, 255, 0.6)); // transparente
+            pared.setX(datos[0]); 
+            pared.setY(datos[1]); 
+            pared.setFill(Color.TRANSPARENT); // invisible
             pared.setUserData("pared");
-            root.getChildren().add(pared); // ← usa `root`, no `laberintoPane`
+            root.getChildren().add(pared);
         }
     }
     
+    private void inicializarMonedas() {
+        double[][] posiciones = {
+            {1000, 700},
+            {1000, 300},
+            {1000, 500}
+        };
 
+        for (double[] pos : posiciones) {
+            Moneda m = new Moneda(pos[0], pos[1]);
+            monedas.add(m);
+            root.getChildren().add(m.getSprite());
+        }
+    }
+    
     public void InteraccionLibrosPinpad() {
         //Interacción con libros
         libros.forEach(libro -> {
