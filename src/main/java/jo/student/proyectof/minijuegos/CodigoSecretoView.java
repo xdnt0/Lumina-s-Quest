@@ -90,9 +90,9 @@ public class CodigoSecretoView {
     
     private void inicializarMonedas() {
         double[][] posiciones = {
-            {1000, 700},
-            {1000, 300},
-            {1000, 500}
+            {1200, 900},
+            {10, 1000},
+            {990, 570}
         };
 
         for (double[] pos : posiciones) {
@@ -102,7 +102,7 @@ public class CodigoSecretoView {
         }
     }
     
-    public void InteraccionLibrosPinpad() {
+    public void InteraccionLibrosPinpadMonedas() {
         //Interacción con libros
         libros.forEach(libro -> {
             if (lumina.getSprite().getBoundsInParent().intersects(libro.getBounds().getBoundsInParent())) {
@@ -118,6 +118,18 @@ public class CodigoSecretoView {
         } else {
             pinPad.resetear();
         }
+        
+        //Interacción con monedas
+        monedas.removeIf(moneda -> {
+        if (moneda.getSprite().isVisible() && 
+            lumina.getSprite().getBoundsInParent().intersects(moneda.getSprite().getBoundsInParent())) {
+            
+            root.getChildren().remove(moneda.getSprite());
+            System.out.println("Moneda recogida!");
+            return true; // Elimina la moneda de la lista
+        }
+        return false;
+    });
     }
     
     public void manejarInput(String input) {

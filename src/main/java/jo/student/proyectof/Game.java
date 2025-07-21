@@ -222,7 +222,7 @@ private void cargarMinijuegoCodigoSecreto(Stage stage) {
                 Controladores control = new Controladores(
                     vista.getLumina(),
                     () -> {
-                        vista.InteraccionLibrosPinpad();
+                        vista.InteraccionLibrosPinpadMonedas();
                         verificarFragmentoAlma(vista);
                     },
                     vista.getRoot()
