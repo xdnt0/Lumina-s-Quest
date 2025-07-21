@@ -203,7 +203,7 @@ public class Game extends Application {
         }
     }
 
-private void cargarMinijuegoCodigoSecreto(Stage stage) {
+    private void cargarMinijuegoCodigoSecreto(Stage stage) {
         PantallaCarga carga = new PantallaCarga(stage);
         carga.mostrar();
 
@@ -258,36 +258,37 @@ private void cargarMinijuegoCodigoSecreto(Stage stage) {
     }
 
 
-private void verificarFragmentoAlma(CodigoSecretoView vista) {
-    if (vista.getFragmentoAlma() != null &&
-        vista.getFragmentoAlma().getSprite().isVisible() &&
-        vista.getLumina().getSprite().getBoundsInParent()
-            .intersects(vista.getFragmentoAlma().getSprite().getBoundsInParent())) {
+    private void verificarFragmentoAlma(CodigoSecretoView vista) {
+        if (vista.getFragmentoAlma() != null &&
+            vista.getFragmentoAlma().getSprite().isVisible() &&
+            vista.getLumina().getSprite().getBoundsInParent()
+                .intersects(vista.getFragmentoAlma().getSprite().getBoundsInParent())) {
 
-        vista.getRoot().getChildren().remove(vista.getFragmentoAlma().getSprite());
-        
-        //Marcar como recogido en el m inijuego
-        vista.getFragmentoAlma().setRecogido(true);
-        fragmentoRecogido = true;
-        codigoSecretoCompletado = true; // Marcar como completado
+            vista.getRoot().getChildren().remove(vista.getFragmentoAlma().getSprite());
 
-        System.out.println("Has recogido el Fragmento del Alma!");
-        
-        //Volver a sala principal después de 2 segundos
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        minijuegoCodigoSecreto = false;
-                        mostrarJuego(primaryStage);
-                    });
-                }
-            }, 
-            2000
-        );
+            //Marcar fragmento recogido y minijuego completado
+            vista.getFragmentoAlma().setRecogido(true);
+            fragmentoRecogido = true;
+            codigoSecretoCompletado = true;
+
+            System.out.println("Has recogido el Fragmento del Alma!");
+
+            //Volver a sala principal después de 3 segundos
+            vista.mostrarMensajeTransicion("Volviendo a la sala principal...");
+            new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            minijuegoCodigoSecreto = false;
+                            mostrarJuego(primaryStage);
+                        });
+                    }
+                }, 
+                3000
+            );
+        }
     }
-}
 
 
 private void lanzarMinijuegoLaserRoom(Stage stage) {

@@ -1,22 +1,26 @@
 package jo.student.proyectof.minijuegos;
 
+//Librerías
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import jo.student.proyectof.entidades.Lumina;
-import jo.student.proyectof.entidades.Fragmentoalma;
-import jo.student.proyectof.entidades.Libro;
-import jo.student.proyectof.entidades.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.util.Duration;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.util.Duration;
+
+//Clases del juego
+import jo.student.proyectof.entidades.Lumina;
+import jo.student.proyectof.entidades.Fragmentoalma;
+import jo.student.proyectof.entidades.Libro;
+import jo.student.proyectof.entidades.*;
 
 public class CodigoSecretoView {
     //Atributos
@@ -28,6 +32,7 @@ public class CodigoSecretoView {
     private Fragmentoalma fragmentoAlma;
     private List<Moneda> monedas = new ArrayList<>();
 
+    //Métodos
     public CodigoSecretoView(int width, int height) {
         root = new Pane();
         root.setPrefSize(width, height);
@@ -35,7 +40,6 @@ public class CodigoSecretoView {
         System.out.println("CodigoSecretoView cargado con " + root.getChildren().size() + " nodos.");
         inicializarParedes();
         inicializarMonedas();
-
     }
 
     private void inicializarVista() {
@@ -126,7 +130,7 @@ public class CodigoSecretoView {
             
             root.getChildren().remove(moneda.getSprite());
             System.out.println("Moneda recogida!");
-            return true; // Elimina la moneda de la lista
+            return true;
         }
         return false;
     });
@@ -154,43 +158,63 @@ public class CodigoSecretoView {
                         }, 
                         2000
                     );
+                  }
                 }
             }
         }
     }
-}
 
-public void mostrarFragmentoAlma() {
-    //Solo mostrar si no ha sido recogido
-    if (!fragmentoAlma.isRecogido()) {
-        fragmentoAlma.getSprite().setVisible(true);
-        
-        //Animación
-        fragmentoAlma.getSprite().setScaleX(0);
-        fragmentoAlma.getSprite().setScaleY(0);
-        
-        new Timeline(
-            new KeyFrame(Duration.seconds(0.5),
-                new KeyValue(fragmentoAlma.getSprite().scaleXProperty(), 1),
-                new KeyValue(fragmentoAlma.getSprite().scaleYProperty(), 1)
-            )
-        ).play();
+    public void mostrarFragmentoAlma() {
+        //Solo mostrar si no ha sido recogido
+        if (!fragmentoAlma.isRecogido()) {
+            fragmentoAlma.getSprite().setVisible(true);
+
+            //Animación
+            fragmentoAlma.getSprite().setScaleX(0);
+            fragmentoAlma.getSprite().setScaleY(0);
+
+            new Timeline(
+                new KeyFrame(Duration.seconds(0.5),
+                    new KeyValue(fragmentoAlma.getSprite().scaleXProperty(), 1),
+                    new KeyValue(fragmentoAlma.getSprite().scaleYProperty(), 1)
+                    )
+                ).play();
+        }
     }
-}
 
-public Fragmentoalma getFragmentoAlma() {
+    public void mostrarMensajeTransicion(String mensaje) {
+        Text textoTransicion = new Text(mensaje);
+        textoTransicion.setFont(fuente);
+        textoTransicion.setFill(Color.WHITE);
+        textoTransicion.setStyle("-fx-font-size: 36; -fx-effect: dropshadow(three-pass-box, black, 10, 0.5, 0, 0);");
+        textoTransicion.setX(600);
+        textoTransicion.setY(950);
+
+        root.getChildren().add(textoTransicion);
+
+        //Animación de fade out con más tiempo pa que no se vea extraño
+        Timeline animacion = new Timeline(
+            new KeyFrame(Duration.seconds(6.0),
+                new KeyValue(textoTransicion.opacityProperty(), 0)
+            )
+        );
+        animacion.setOnFinished(e -> root.getChildren().remove(textoTransicion));
+        animacion.play();
+    }
+
+    public Fragmentoalma getFragmentoAlma() {
         return fragmentoAlma;
     }
     
-public Pane getRoot() {
+    public Pane getRoot() {
         return root;
     }
 
-public Lumina getLumina() {
+    public Lumina getLumina() {
         return lumina;
     }
     
-public PinPad getPinPad() {
+    public PinPad getPinPad() {
     return pinPad;
     }
 }

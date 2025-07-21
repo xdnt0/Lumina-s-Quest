@@ -17,6 +17,7 @@ public class Libro extends Entidad{
     private boolean mostrandoPista = false;
     private Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),16);
 
+    //Métodos
     public Libro(double x, double y, String pista) {
         this.pista = pista;
         Image img = new Image(getClass().getResourceAsStream("/images/libro/Libro1.png"));

@@ -1,4 +1,5 @@
 package jo.student.proyectof.entidades;
+
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -11,14 +12,14 @@ public class PinPad extends Entidad {
     private String codigoSecreto;
     private Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),24);
 
+    //Métodos
     public PinPad(double x, double y, String codigoSecreto) {
         this.codigoSecreto = codigoSecreto;
         this.areaInteraccion = new Rectangle(x, y, 200, 200);
         this.areaInteraccion.setOpacity(0.3);
         this.textoDisplay = new Text(x + 50, y + 100, "____");
         this.textoDisplay.setFont(fuente);
-        this.textoDisplay.setStyle("-fx-font-size: 24; -fx-fill: white; -fx-font-weight: bold;");
-        
+        this.textoDisplay.setStyle("-fx-font-size: 24; -fx-fill: white; -fx-font-weight: bold;"); 
     }
     
     private void actualizarDisplay() {
