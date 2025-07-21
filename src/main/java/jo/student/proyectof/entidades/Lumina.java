@@ -81,5 +81,9 @@ public class Lumina extends Entidad{
     public boolean estaInvulnerable() {
         return invulnerable;
     }
+    
+    public ImageView getSprite() {
+        return sprite;
+    }
         
 }

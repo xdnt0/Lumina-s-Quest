@@ -3,6 +3,7 @@ package jo.student.proyectof.minijuegos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
 import jo.student.proyectof.entidades.Libro;
@@ -13,6 +14,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
@@ -30,6 +32,7 @@ public class CodigoSecretoView {
         root.setPrefSize(width, height);
         inicializarVista();
         System.out.println("CodigoSecretoView cargado con " + root.getChildren().size() + " nodos.");
+        inicializarParedes();
 
     }
 
@@ -66,6 +69,23 @@ public class CodigoSecretoView {
         fragmentoAlma.getSprite().setVisible(false);
         root.getChildren().add(fragmentoAlma.getSprite());
     }
+    
+    private void inicializarParedes() {
+        int[][] paredesData = {
+            {0, 424, 147, 2}, {143, 172, 4, 252}, {143, 172, 213, 4}, {352, 172, 4, 252}, {352, 424, 806, 2},
+            {1154, 90, 4, 334}, {1154, 86, 682, 4}, {1836, 90, 4, 990}, {0, 1080, 1920, 2}, {0, 0, 2, 1080},
+        };
+
+        for (int[] datos : paredesData) {
+            Rectangle pared = new Rectangle(datos[2], datos[3]); // ancho, alto
+            pared.setX(datos[0]); // x
+            pared.setY(datos[1]); // y
+            pared.setFill(Color.rgb(255, 255, 255, 0.6)); // transparente
+            pared.setUserData("pared");
+            root.getChildren().add(pared); // ← usa `root`, no `laberintoPane`
+        }
+    }
+    
 
     public void InteraccionLibrosPinpad() {
         //Interacción con libros

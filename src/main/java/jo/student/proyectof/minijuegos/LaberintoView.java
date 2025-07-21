@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LaberintoView {
-
+    
+    private boolean salidaActivada = false;
+    private Rectangle zonaSalida;
+    private Runnable onSalida;
     private Pane laberintoPane;
     private Lumina lumina;
     private Fragmentoalma fragmentoalma;
@@ -52,6 +55,12 @@ public class LaberintoView {
 
         fragmentoalma = new Fragmentoalma(1720, 910);
         laberintoPane.getChildren().add(fragmentoalma.getSprite());
+        
+        // Zona de salida         
+        zonaSalida = new Rectangle(13, 361, 37, 84); // ejemplo en la parte inferior
+        zonaSalida.setOpacity(0.0); // invisible
+        laberintoPane.getChildren().add(zonaSalida);
+        
     }
 
     private void inicializarParedes() {
@@ -178,7 +187,7 @@ public class LaberintoView {
             }
         }
     }
-
+    
     public List<Moneda> getMonedas() {
         return monedas;
     }
@@ -193,6 +202,23 @@ public class LaberintoView {
             fragmentoRecogido = true;
         }
     }
+    
+    public void detectarSalida() {
+    // Verificar si el fragmento fue recogido antes de activar la salida
+    if (!salidaActivada && fragmentoRecogido &&
+            lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
+        
+            salidaActivada = true;
+
+            if (onSalida != null) {
+               onSalida.run();  // Ejecuta la acción definida (volver a sala principal)
+            }
+        }
+    }
+    
+    public void setOnSalida(Runnable onSalida) {
+        this.onSalida = onSalida;
+    }
 
     public Enemigos getRobotCentinela() {
         return robotCentinela;
@@ -201,7 +227,15 @@ public class LaberintoView {
     public Pane getLaberintoPane() {
         return laberintoPane;
     }
+    
+    public boolean isFragmentoRecogido() {
+        return fragmentoRecogido;
+    }
 
+    public void setFragmentoRecogido(boolean recogido) {
+        this.fragmentoRecogido = recogido;
+    }
+    
     public Lumina getLumina() {
         return lumina;
     }
@@ -212,6 +246,7 @@ public class LaberintoView {
             moverRobotPorCamino();
             verificarColisionRobotLumina();
             Colisiones.verificarMonedas(lumina, monedas, laberintoPane);
+            detectarSalida();
         }
     };
 }

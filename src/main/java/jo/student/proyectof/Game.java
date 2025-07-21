@@ -160,6 +160,12 @@ public class Game extends Application {
                     laberintoPane
                 );
                 controles.configurarControles(nuevaScene);
+                
+                laberintoView.setOnSalida(() -> {
+                Platform.runLater(() -> {
+                        mostrarJuego(stage);  
+                    });
+                });
 
                 Platform.runLater(() -> {
                     stage.setScene(nuevaScene);
@@ -171,6 +177,7 @@ public class Game extends Application {
                     public void handle(long now) {
                         laberintoView.moverRobotPorCamino();
                         laberintoView.verificarColisionRobotLumina();
+                        laberintoView.detectarSalida();
                     }
                 };
                 gameLoop.start();
@@ -291,12 +298,21 @@ private void lanzarMinijuegoLaserRoom(Stage stage) {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            
 
             Platform.runLater(() -> {
                 LaserRoomView vista = new LaserRoomView(stage);
+                vista.setOnSalida(() -> lanzarSalaPrincipal(stage));
                 applyFullscreen(stage);
             });
         }).start();
+    }
+
+private void lanzarSalaPrincipal(Stage stage) {
+    SalaInicialView salaInicial = new SalaInicialView(WIDTH, HEIGHT);
+        Scene scene = new Scene(salaInicial.getRoot(), WIDTH, HEIGHT);
+        stage.setScene(scene);
+        applyFullscreen(stage);
     }
 
     // Método utilitario para Fullscreen y Always on Top

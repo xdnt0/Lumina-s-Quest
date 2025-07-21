@@ -29,6 +29,8 @@ public class LaserRoomView {
     private List<ImageView> corazones = new ArrayList<>();
     private Fragmentoalma fragmentoalma;
     private Controladores control;
+    private Rectangle zonaSalida;
+    private Runnable onSalida;
 
     private AnimationTimer loop;
 
@@ -37,6 +39,7 @@ public class LaserRoomView {
         root.setPrefSize(1920, 1080);
 
         inicializarFondo();
+        inicializarParedes();
         inicializarLumina();
         inicializarLasers();
         inicializarFragmento();
@@ -51,6 +54,7 @@ public class LaserRoomView {
             public void handle(long now) {
                 actualizarLasers();
                 verificarColisionLasers();
+                detectarSalida();
             }
         };
         loop.start();
@@ -63,11 +67,35 @@ public class LaserRoomView {
         ImageView fondoView = new ImageView(fondo);
         root.getChildren().add(fondoView);
     }
+    
+    private void inicializarParedes() {
+        int[][] paredesData = {
+            {0, 424, 147, 2}, {143, 172, 4, 252}, {143, 172, 213, 4}, {352, 172, 4, 252}, {352, 424, 806, 2},
+            {1154, 90, 4, 334}, {1154, 86, 682, 4}, {1836, 90, 4, 990}, {0, 1080, 1920, 2}, {0, 0, 2, 1080},
+        };
+
+        for (int[] datos : paredesData) {
+            Rectangle pared = new Rectangle(datos[2], datos[3]); // ancho, alto
+            pared.setX(datos[0]); // x
+            pared.setY(datos[1]); // y
+            pared.setFill(Color.rgb(255, 255, 255, 0.6)); // transparente
+            pared.setUserData("pared");
+            root.getChildren().add(pared); // ← usa `root`, no `laberintoPane`
+        }
+        
+        zonaSalida = new Rectangle(50, 100); // tamaño del área de salida
+        zonaSalida.setX(1800); // ajusta la posición según tu diseño
+        zonaSalida.setY(920);
+        zonaSalida.setFill(Color.TRANSPARENT);
+        zonaSalida.setUserData("salida");
+        zonaSalida.setVisible(false); // solo será visible (interactiva) cuando se recoja el fragmento
+        root.getChildren().add(zonaSalida);
+    }
 
     private void inicializarLumina() {
         lumina = new Lumina();
         lumina.getSprite().setLayoutX(100);
-        lumina.getSprite().setLayoutY(400);
+        lumina.getSprite().setLayoutY(600);
         root.getChildren().add(lumina.getSprite());
     }
 
@@ -131,15 +159,44 @@ public class LaserRoomView {
             }
         }
     }
+    
+    private void detectarSalida() {
+        if (fragmentoalma.isRecogido() &&
+            lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
+            if (onSalida != null) {
+                loop.stop(); // detener el juego
+                onSalida.run();
+            }
+        }
+    }
 
     private void verificarEventos() {
         if (!fragmentoalma.isRecogido() &&
             lumina.getSprite().getBoundsInParent().intersects(fragmentoalma.getSprite().getBoundsInParent())) {
             fragmentoalma.setRecogido(true);
             root.getChildren().remove(fragmentoalma.getSprite());
+            zonaSalida.setVisible(true);
             System.out.println("Lúmina obtenida");
         }
+        
+        if (zonaSalida != null &&
+            lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
+            if (onSalida != null) {
+                loop.stop(); // detener el juego
+                onSalida.run(); // ejecutar la acción al salir
+            }
+        }
+        
     }
+    
+    public void setOnSalida(Runnable onSalida) {
+        this.onSalida = onSalida;
+    }
+    
+    public Scene getScene() {
+        return root.getScene(); 
+    }
+    
     public Lumina getLumina() {
         return lumina;
     }
