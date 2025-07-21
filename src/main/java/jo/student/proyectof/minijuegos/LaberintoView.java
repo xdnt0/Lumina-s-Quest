@@ -80,7 +80,7 @@ public class LaberintoView {
         pared.setX(datos[0]);
         pared.setY(datos[1]);
         pared.setFill(Color.rgb(255, 255, 255, 0.0));
-        pared.setUserData("pared"); // ✅ en lugar de usar CSS
+        pared.setUserData("pared"); // en lugar de usar CSS
         laberintoPane.getChildren().add(pared);
         }
     }
