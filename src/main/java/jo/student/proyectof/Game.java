@@ -9,6 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.Node;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 // Clases del juego
 import jo.student.proyectof.entidades.Lumina;
@@ -182,28 +184,88 @@ public class Game extends Application {
             laberintoView.marcarFragmentoRecogido();
         }
     }
+    
+private void cargarMinijuegoCodigoSecreto(Stage stage) {
+    PantallaCarga carga = new PantallaCarga(stage);
+    carga.mostrar();
 
-        private void cargarMinijuegoCodigoSecreto(Stage stage) {
-        PantallaCarga carga = new PantallaCarga(stage);
-        carga.mostrar();
+    new Thread(() -> {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            CodigoSecretoView vista = new CodigoSecretoView(WIDTH, HEIGHT);
-            Platform.runLater(() -> {
-                Scene escena = new Scene(vista.getRoot());
-                Controladores control = new Controladores(vista.getLumina(), vista::InteraccionLibrosPinpad, vista.getRoot());
-                control.configurarControles(escena);
-                stage.setScene(escena);
-                stage.show();
+        CodigoSecretoView vista = new CodigoSecretoView(WIDTH, HEIGHT);
+        Platform.runLater(() -> {
+            Scene escena = new Scene(vista.getRoot(), WIDTH, HEIGHT);
+            
+            //Configurar controles
+            Controladores control = new Controladores(
+                vista.getLumina(), 
+                () -> {
+                    vista.InteraccionLibrosPinpad();
+                    verificarFragmentoAlma(vista);
+                }, 
+                vista.getRoot()
+            );
+            control.configurarControles(escena);
+            
+            //Manejador de teclado para el PinPad
+            escena.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+                if (vista.getLumina().getSprite().getBoundsInParent()
+                    .intersects(vista.getPinPad().getAreaInteraccion().getBoundsInParent())) {
+                    
+                    if (e.getCode().isDigitKey()) {
+                        vista.manejarInput(e.getText());
+                        e.consume();
+                    }
+                }
             });
-        }).start();
+            
+            //Game loop para verificar colisiones
+            AnimationTimer gameLoop = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    verificarFragmentoAlma(vista);
+                }
+            };
+            gameLoop.start();
+            
+            stage.setScene(escena);
+            stage.show();
+        });
+    }).start();
+}
+
+
+private void verificarFragmentoAlma(CodigoSecretoView vista) {
+    if (vista.getFragmentoAlma() != null && 
+        vista.getFragmentoAlma().getSprite().isVisible() &&
+        vista.getLumina().getSprite().getBoundsInParent()
+            .intersects(vista.getFragmentoAlma().getSprite().getBoundsInParent())) {
+        
+        //Al recoger el fragmento
+        vista.getRoot().getChildren().remove(vista.getFragmentoAlma().getSprite());
+        fragmentoRecogido = true;
+        System.out.println("Has recogido el Fragmento del Alma!");
+        
+        //Volver a la sala principal después de 2 segundos
+        new java.util.Timer().schedule(
+            new java.util.TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        minijuegoCodigoSecreto = false;
+                        mostrarJuego(primaryStage);
+                    });
+                }
+            }, 
+            2000
+        );
     }
+} 
+
 private void lanzarMinijuegoLaserRoom(Stage stage) {
     PantallaCarga carga = new PantallaCarga(stage);
     carga.mostrar();

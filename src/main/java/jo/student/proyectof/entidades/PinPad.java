@@ -14,10 +14,41 @@ public class PinPad extends Entidad {
     public PinPad(double x, double y, String codigoSecreto) {
         this.codigoSecreto = codigoSecreto;
         this.areaInteraccion = new Rectangle(x, y, 200, 200);
-        this.areaInteraccion.setOpacity(0.0);
-        this.textoDisplay = new Text(x, y - 30, "");
+        this.areaInteraccion.setOpacity(0.3);
+        this.textoDisplay = new Text(x + 50, y + 100, "____");
         this.textoDisplay.setFont(fuente);
-        this.textoDisplay.setStyle("-fx-font-size: 24; -fx-fill: white;");
+        this.textoDisplay.setStyle("-fx-font-size: 24; -fx-fill: white; -fx-font-weight: bold;");
+        
+    }
+    
+    private void actualizarDisplay() {
+        StringBuilder display = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            if (i < codigoIngresado.length()) {
+                display.append(codigoIngresado.charAt(i));
+            } else {
+                display.append("_");
+            }
+        }
+        textoDisplay.setText(display.toString());
+    }
+
+    public boolean verificarCodigo() {
+        boolean correcto = codigoIngresado.toString().equals(codigoSecreto);
+        if (correcto) {
+            textoDisplay.setStyle("-fx-fill: #00ff00; -fx-font-size: 24;"); // Verde si es correcto
+            textoDisplay.setText("¡Correcto!");
+        } else {
+            textoDisplay.setStyle("-fx-fill: #ff0000; -fx-font-size: 24;"); // Rojo si es incorrecto
+            textoDisplay.setText("Incorrecto");
+        }
+        return correcto;
+    }
+
+    public void resetear() {
+        codigoIngresado.setLength(0);
+        textoDisplay.setStyle("-fx-fill: white; -fx-font-size: 24;");
+        textoDisplay.setText("____");
     }
 
     @Override
@@ -29,21 +60,6 @@ public class PinPad extends Entidad {
             codigoIngresado.append(digito);
             actualizarDisplay();
         }
-    }
-
-    public boolean verificarCodigo() {
-        boolean correcto = codigoIngresado.toString().equals(codigoSecreto);
-        textoDisplay.setText(correcto ? "¡Correcto!" : "Incorrecto");
-        return correcto;
-    }
-
-    public void resetear() {
-        codigoIngresado.setLength(0);
-        textoDisplay.setText("Ingrese código");
-    }
-
-    private void actualizarDisplay() {
-        textoDisplay.setText(codigoIngresado.toString());
     }
 
     public Rectangle getAreaInteraccion() {
