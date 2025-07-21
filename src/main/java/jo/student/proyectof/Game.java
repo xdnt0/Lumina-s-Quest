@@ -289,24 +289,22 @@ private void verificarFragmentoAlma(CodigoSecretoView vista) {
 
 
 private void lanzarMinijuegoLaserRoom(Stage stage) {
-        PantallaCarga carga = new PantallaCarga(stage);
-        carga.mostrar();
+    mostrarPantallaCargaYDespues(
+        () -> {}, // Aquí podrías cargar recursos si los tuvieras
+        () -> {
+            LaserRoomView vista = new LaserRoomView(stage);
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            
-
-            Platform.runLater(() -> {
-                LaserRoomView vista = new LaserRoomView(stage);
-                vista.setOnSalida(() -> lanzarSalaPrincipal(stage));
-                applyFullscreen(stage);
+            vista.setOnSalida(() -> {
+                minijuegoLaserRoom = true; // permite reentrar si se desea
+                mostrarJuego(stage);        // volver a la sala principal
             });
-        }).start();
-    }
+
+            Scene escena = vista.getScene(); // método nuevo que debes agregar en LaserRoomView
+            stage.setScene(escena);
+            applyFullscreen(stage);
+        }
+    );
+}
 
 private void lanzarSalaPrincipal(Stage stage) {
     SalaInicialView salaInicial = new SalaInicialView(WIDTH, HEIGHT);

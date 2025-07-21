@@ -23,6 +23,8 @@ import java.util.List;
 
 public class LaserRoomView {
 
+    private boolean fragmentoRecogido = false;
+    private boolean salidaActivada = false;
     private Pane root;
     private Lumina lumina;
     private List<Laser> lasers = new ArrayList<>();
@@ -58,7 +60,7 @@ public class LaserRoomView {
             }
         };
         loop.start();
-        stage.setScene(escena);
+        //stage.setScene(escena);
         stage.show();
     }
 
@@ -83,9 +85,9 @@ public class LaserRoomView {
             root.getChildren().add(pared); // ← usa `root`, no `laberintoPane`
         }
         
-        zonaSalida = new Rectangle(50, 100); // tamaño del área de salida
-        zonaSalida.setX(1800); // ajusta la posición según tu diseño
-        zonaSalida.setY(920);
+        zonaSalida = new Rectangle(202, 60); // tamaño del área de salida
+        zonaSalida.setX(149); // ajusta la posición según tu diseño
+        zonaSalida.setY(210);
         zonaSalida.setFill(Color.TRANSPARENT);
         zonaSalida.setUserData("salida");
         zonaSalida.setVisible(false); // solo será visible (interactiva) cuando se recoja el fragmento
@@ -124,6 +126,13 @@ public class LaserRoomView {
     private void inicializarFragmento() {
         fragmentoalma = new Fragmentoalma(1440, 625);
         root.getChildren().add(fragmentoalma.getSprite());
+    }
+    
+    public void marcarFragmentoRecogido() {
+        if (fragmentoalma != null) {
+            fragmentoalma.setRecogido(true);
+            fragmentoRecogido = true;
+        }
     }
 
     private void inicializarCorazones() {
@@ -179,11 +188,15 @@ public class LaserRoomView {
             System.out.println("Lúmina obtenida");
         }
         
-        if (zonaSalida != null &&
+        if (!salidaActivada &&
+            fragmentoalma.isRecogido() &&
+            zonaSalida != null &&
             lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
+        
+            salidaActivada = true; // Marca que ya se ejecutó
             if (onSalida != null) {
-                loop.stop(); // detener el juego
-                onSalida.run(); // ejecutar la acción al salir
+                loop.stop(); // Detener el juego
+                onSalida.run(); // Ejecutar la acción de salida
             }
         }
         
