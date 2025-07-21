@@ -77,8 +77,8 @@ public class LaserRoomView {
 
     Laser laser1 = new Laser(900, 430, imgActiva, imgInactiva);
     Laser laser2 = new Laser(580, 430, imgActiva, imgInactiva);
-    Laser laser3 = new Laser(800, 1080, imgActiva, imgInactiva);
-    Laser laser4 = new Laser(950, 1080, imgActiva, imgInactiva);
+    Laser laser3 = new Laser(750, 1000, imgActiva, imgInactiva);
+    Laser laser4 = new Laser(1050, 1000, imgActiva, imgInactiva);
 
     lasers.add(laser1);
     lasers.add(laser2);
@@ -94,7 +94,7 @@ public class LaserRoomView {
 
 
     private void inicializarFragmento() {
-        fragmentoalma = new Fragmentoalma(1700, 400);
+        fragmentoalma = new Fragmentoalma(1440, 625);
         root.getChildren().add(fragmentoalma.getSprite());
     }
 
