@@ -20,28 +20,28 @@ public class PantallaCarga {
     public PantallaCarga(Stage stage) {
         this.stage = stage;
 
-        // Cargar la fuente personalizada desde resources/fuentes
+        // Cargar la fuente personalizada 
         Font fuente = Font.loadFont(
             getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),
-            30 // Tamaño base
+            30 // Tamaño 
         );
 
-        // Mensaje visible
+        // Mensaje 
         Label mensaje = new Label("Cargando...");
         mensaje.setFont(fuente);
         mensaje.setStyle("-fx-text-fill: white;");
 
-        // Indicador de carga giratorio
+        // Indicador de la rueda de carga
         ProgressIndicator loading = new ProgressIndicator();
         loading.setStyle("-fx-progress-color: white;");
 
         // Layout
-        VBox root = new VBox(20, loading, mensaje);
-        root.setAlignment(Pos.CENTER);
-        root.setStyle("-fx-background-color: black;");
+        VBox root = new VBox(20, loading, mensaje); // Mostra el texto debajo de la rueda de carga
+        root.setAlignment(Pos.CENTER); //Centrado en pantalla
+        root.setStyle("-fx-background-color: black;"); //Fondo negro
 
-        // Crear escena
-        scene = new Scene(root, 1920, 1080); // Ajusta al tamaño real del juego
+        // Crear escena a pantalla completa
+        scene = new Scene(root, 1920, 1080); 
     }
 
     public void mostrar() {

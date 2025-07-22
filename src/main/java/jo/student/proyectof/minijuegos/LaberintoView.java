@@ -1,25 +1,30 @@
 package jo.student.proyectof.minijuegos;
 
+// Javafx
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
+//Imports de entidades
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Fragmentoalma;
 import jo.student.proyectof.entidades.Enemigos;
 import jo.student.proyectof.entidades.Moneda;
-import jo.student.proyectof.utilidades.Colisiones;
 
+//Imports de utilidades
+import jo.student.proyectof.utilidades.Colisiones;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LaberintoView {
     
-    private boolean salidaActivada = false;
-    private Rectangle zonaSalida;
-    private Runnable onSalida;
+    private boolean salidaActivada = false; //Marca si se activo la salida
+    private Rectangle zonaSalida; //Zona para salir del laberinto
+    private Runnable onSalida; //Accion a ejecutar para la salida
+    
     private Pane laberintoPane;
     private Lumina lumina;
     private Fragmentoalma fragmentoalma;
@@ -34,13 +39,13 @@ public class LaberintoView {
         laberintoPane = new Pane();
         laberintoPane.setPrefSize(width, height);
 
-        inicializarFondoYLumina();
-        inicializarHUD();
-        inicializarCaminoRobot();
-        inicializarMonedas();
-        inicializarParedes(); // ✅ corregido: marca paredes con clase "pared"
+        inicializarFondoYLumina(); //Fondo y personaje
+        inicializarHUD(); //Corazones
+        inicializarCaminoRobot(); //Ruta del robot centinela
+        inicializarMonedas(); //Monedas que estan en el laberinto
+        inicializarParedes(); // Paredes invisibles del laberinto
 
-        gameLoop.start();
+        gameLoop.start(); //Iniciar el bucle del juego
     }
 
     private void inicializarFondoYLumina() {
@@ -64,6 +69,7 @@ public class LaberintoView {
     }
 
     private void inicializarParedes() {
+        // Cordenadas de las paredes (x, y, Ancho, Alto)
         int[][] paredesData = {
             {28, 125, 39, 236}, {28, 125, 422, 32}, {413, 125, 37, 136}, {413, 228, 154, 32},
             {530, 125, 37, 136}, {530, 125, 379, 32}, {872, 125, 37, 142}, {1116, 125, 38, 135},
@@ -89,12 +95,13 @@ public class LaberintoView {
         pared.setX(datos[0]);
         pared.setY(datos[1]);
         pared.setFill(Color.rgb(255, 255, 255, 0.0));
-        pared.setUserData("pared"); // ✅ en lugar de usar CSS
+        pared.setUserData("pared"); // marcar la pared para colisiones
         laberintoPane.getChildren().add(pared);
         }
     }
 
     private void inicializarCaminoRobot() {
+        //Lista de puntos por donde se mueve el robot
         caminoRobot = new ArrayList<>();
         caminoRobot.add(new double[]{1794, 958});
         caminoRobot.add(new double[]{1786, 147});
@@ -147,6 +154,7 @@ public class LaberintoView {
     }
 
     private void actualizarCorazones() {
+        //Ocultar un corazon si lumina pierde vida
         for (int i = 0; i < corazones.size(); i++) {
             corazones.get(i).setVisible(i < lumina.getVidas());
         }
@@ -156,7 +164,7 @@ public class LaberintoView {
         if (robotCentinela == null) {
             robotCentinela = new Enemigos(1490, 800);
             laberintoPane.getChildren().add(robotCentinela.getSprite());
-            puntoActual = 0;
+            puntoActual = 0; //Reiniciar el recorrido
         }
     }
 
@@ -172,7 +180,7 @@ public class LaberintoView {
             double dy = Math.abs(robotCentinela.getY() - y);
 
             if (dx < 5 && dy < 5) {
-                puntoActual++;
+                puntoActual++; //Pasa al siguiente punto del camino
             }
         }
     }
@@ -204,14 +212,14 @@ public class LaberintoView {
     }
     
     public void detectarSalida() {
-    // Verificar si el fragmento fue recogido antes de activar la salida
+    // Activa la salida si el fragmento fue recogido
     if (!salidaActivada && fragmentoRecogido &&
             lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
         
             salidaActivada = true;
 
             if (onSalida != null) {
-               onSalida.run();  // Ejecuta la acción definida (volver a sala principal)
+               onSalida.run();  // Ejecuta la acción de volver a la sala
             }
         }
     }
@@ -239,7 +247,8 @@ public class LaberintoView {
     public Lumina getLumina() {
         return lumina;
     }
-
+    
+    //Bucle principal del minijuego
     AnimationTimer gameLoop = new AnimationTimer() {
         @Override
         public void handle(long now) {

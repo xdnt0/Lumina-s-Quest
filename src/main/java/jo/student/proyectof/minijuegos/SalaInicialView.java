@@ -17,9 +17,11 @@ public class SalaInicialView {
     private Pane root;
     private Lumina lumina;
 
-    private Rectangle puerta1, puerta2, puerta3;
-    private Runnable onPuerta1, onPuerta2, onPuerta3; // Para notificar cambio de minijuego
-
+    private Rectangle puerta1, puerta2, puerta3; // Rectangulos invisibles para representar las puertas
+    
+    private Runnable onPuerta1, onPuerta2, onPuerta3; // Acciones que se eejcutan al tocar la puerta
+    
+    //Constructor
     public SalaInicialView(int width, int height) {
         root = new Pane();
         root.setPrefSize(width, height);
@@ -38,7 +40,7 @@ public class SalaInicialView {
         lumina.getSprite().setLayoutY(800);
         root.getChildren().add(lumina.getSprite());
 
-        // 3. Puerta invisible para detección (NO bloquear el paso)
+        // 3. Puerta invisible para los rectangulos
         puerta1 = new Rectangle(145, 150, 152, 73);
         puerta1.setOpacity(0.0);
         root.getChildren().add(puerta1);
@@ -47,12 +49,12 @@ public class SalaInicialView {
         puerta2.setOpacity(0.0);
         root.getChildren().add(puerta2);
 
-        puerta3 = new Rectangle(1380, 150, 140, 70); // al lado de Lumina
-        puerta3.setOpacity(0.5);
+        puerta3 = new Rectangle(1380, 150, 140, 70); 
+        puerta3.setOpacity(0.0);
         root.getChildren().add(puerta3);
 
 
-        // 4. Paredes que SÍ bloquean el movimiento
+        // 4. Paredes de la sala principal
         int[][] paredesData = {
             {0, 0, 1, 1080},
             {0, 960, 1920, 20},
@@ -71,15 +73,16 @@ public class SalaInicialView {
             {1524, 109, 39, 248},
             {1524, 322, 396, 35},
         };
-
+        
+        //Agregar las paredes
         for (int[] datos : paredesData) {
-            Rectangle pared = new Rectangle(datos[0], datos[1], datos[2], datos[3]); // x, y, width, height
+            Rectangle pared = new Rectangle(datos[0], datos[1], datos[2], datos[3]); // x, y, Ancho, Alto
             pared.setFill(Color.TRANSPARENT); // invisible
             pared.setUserData("pared"); // sistema de colisión
             root.getChildren().add(pared);
         }
     }
-
+    //Detectar si lumina toca alguna puerta
     public void detectarPuertas() {
         if (lumina.getSprite().getBoundsInParent().intersects(puerta1.getBoundsInParent())) {
             if (onPuerta1 != null) {
@@ -100,7 +103,7 @@ public class SalaInicialView {
 
     }
 
-
+    //Metodos para acceder a elementos principales
     public Pane getRoot() {
         return root;
     }
@@ -117,6 +120,8 @@ public class SalaInicialView {
     public Rectangle getPuerta3() {
     return puerta3;
     }
+    
+    //Metodos para asignar acciones al tocar la puerta
     public void setOnPuerta1(Runnable r) {
         this.onPuerta1 = r;
     }
