@@ -5,22 +5,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.geometry.Bounds;
+import java.util.Random;
 
 public class Laser extends Entidad {
-
-    private boolean activo;
-    private long tiempoCambio;
-    private long ultimoCambio;
 
     private Image imagenActiva;
     private Image imagenInactiva;
 
     private Rectangle hitbox;
+    private Rectangle haz;
+
+    private boolean activo = true;
+    private long ultimoCambio = System.currentTimeMillis();
+    private long duracionActual = 1000;
+    private static final Random random = new Random();
 
     public Laser(int x, int y, Image imagenActiva, Image imagenInactiva) {
-        this.activo = true;
-        this.tiempoCambio = 1000; // 1 segundo
-        this.ultimoCambio = System.currentTimeMillis();
         this.imagenActiva = imagenActiva;
         this.imagenInactiva = imagenInactiva;
 
@@ -30,23 +30,38 @@ public class Laser extends Entidad {
         this.sprite.setLayoutX(x);
         this.sprite.setLayoutY(y);
 
+        // Hitbox del sprite (bloqueo)
         this.hitbox = new Rectangle();
         this.hitbox.setFill(Color.TRANSPARENT);
         this.hitbox.setUserData("pared");
 
-        actualizarHitbox(); // Inicializar hitbox en la posición correcta
+        // Haz de luz (rayo rojo)
+        this.haz = new Rectangle();
+        this.haz.setFill(Color.rgb(255, 0, 0, 0.2)); // rojo tenue visible
+        this.haz.setUserData("laserHaz");
+
+        actualizarHitbox();
     }
 
     public void actualizar() {
         long ahora = System.currentTimeMillis();
-        if (ahora - ultimoCambio >= tiempoCambio) {
+        if (ahora - ultimoCambio >= duracionActual) {
             activo = !activo;
             ultimoCambio = ahora;
+
+            if (activo) {
+                duracionActual = 1000; // encendido dura fijo
+            } else {
+                duracionActual = 1500 + random.nextInt(1001); // entre 1500 y 2500 ms
+            }
+
             sprite.setImage(activo ? imagenActiva : imagenInactiva);
-            hitbox.setUserData(activo ? "pared" : null); // solo bloquea si está activo
+            sprite.setOpacity(activo ? 1.0 : 0.5);
+            haz.setVisible(activo);
+            hitbox.setUserData(activo ? "pared" : null);
         }
 
-        actualizarHitbox(); // siempre actualiza posición y tamaño real
+        actualizarHitbox();
     }
 
     private void actualizarHitbox() {
@@ -55,8 +70,25 @@ public class Laser extends Entidad {
         hitbox.setY(bounds.getMinY());
         hitbox.setWidth(bounds.getWidth());
         hitbox.setHeight(bounds.getHeight());
-        hitbox.setFill(Color.rgb(255, 0, 0, 0.3)); // rojo semitransparente
+    }
 
+    /**
+     * Configura un haz de luz vertical proyectado hacia arriba o hacia abajo.
+     * @param alto altura del haz
+     * @param haciaArriba true si el haz va hacia arriba, false si hacia abajo
+     */
+    public void configurarHazVertical(double alto, boolean haciaArriba) {
+        double x = sprite.getLayoutX();
+        double y = haciaArriba
+            ? sprite.getLayoutY() - alto
+            : sprite.getLayoutY() + sprite.getFitHeight();
+
+        double ancho = sprite.getFitWidth();
+
+        haz.setX(x);
+        haz.setY(y);
+        haz.setWidth(ancho);
+        haz.setHeight(alto);
     }
 
     public boolean estaActivo() {
@@ -67,8 +99,12 @@ public class Laser extends Entidad {
         return hitbox;
     }
 
+    public Rectangle getHaz() {
+        return haz;
+    }
+
     @Override
     public void colision(Entidad otra) {
-        // lógica opcional
+        // lógica personalizada si la necesitas
     }
 }

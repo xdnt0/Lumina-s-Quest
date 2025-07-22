@@ -69,6 +69,13 @@ public class Lumina extends Entidad{
     public int getVidas() {
         return vidas;
     }
+    public void setVidas(int vidas) {
+        this.vidas = Math.max(0, vidas);
+        if (this.vidas == 0) {
+            System.out.println("Lumina ha muerto");
+            // aquí podrías detener movimiento o cambiar sprite, etc.
+        }
+    }
 
     public void setColision(boolean colision) {
         this.colisionDetectada = colision;

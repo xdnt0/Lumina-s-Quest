@@ -1,9 +1,5 @@
 package jo.student.proyectof.minijuegos;
 
-/**
- *
- * @author johan
- */
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -60,7 +56,7 @@ public class LaserRoomView {
             }
         };
         loop.start();
-        //stage.setScene(escena);
+        stage.setScene(escena);
         stage.show();
     }
 
@@ -69,7 +65,7 @@ public class LaserRoomView {
         ImageView fondoView = new ImageView(fondo);
         root.getChildren().add(fondoView);
     }
-    
+
     private void inicializarParedes() {
         int[][] paredesData = {
             {0, 424, 147, 2}, {143, 172, 4, 252}, {143, 172, 213, 4}, {352, 172, 4, 252}, {352, 424, 806, 2},
@@ -77,20 +73,20 @@ public class LaserRoomView {
         };
 
         for (int[] datos : paredesData) {
-            Rectangle pared = new Rectangle(datos[2], datos[3]); // ancho, alto
-            pared.setX(datos[0]); // x
-            pared.setY(datos[1]); // y
-            pared.setFill(Color.rgb(255, 255, 255, 0.6)); // transparente
+            Rectangle pared = new Rectangle(datos[2], datos[3]);
+            pared.setX(datos[0]);
+            pared.setY(datos[1]);
+            pared.setFill(Color.rgb(255, 255, 255, 0.6));
             pared.setUserData("pared");
-            root.getChildren().add(pared); // ← usa `root`, no `laberintoPane`
+            root.getChildren().add(pared);
         }
-        
-        zonaSalida = new Rectangle(202, 60); // tamaño del área de salida
-        zonaSalida.setX(149); // ajusta la posición según tu diseño
+
+        zonaSalida = new Rectangle(202, 60);
+        zonaSalida.setX(149);
         zonaSalida.setY(210);
         zonaSalida.setFill(Color.TRANSPARENT);
         zonaSalida.setUserData("salida");
-        zonaSalida.setVisible(false); // solo será visible (interactiva) cuando se recoja el fragmento
+        zonaSalida.setVisible(false);
         root.getChildren().add(zonaSalida);
     }
 
@@ -102,32 +98,39 @@ public class LaserRoomView {
     }
 
     private void inicializarLasers() {
-    Image imgActiva = new Image(getClass().getResourceAsStream("/images/laser.png"));
-    Image imgInactiva = new Image(getClass().getResourceAsStream("/images/laser.png"));
+        Image imgActiva = new Image(getClass().getResourceAsStream("/images/laser.png"));
+        Image imgInactiva = new Image(getClass().getResourceAsStream("/images/laser.png"));
 
-    Laser laser1 = new Laser(900, 430, imgActiva, imgInactiva);
-    Laser laser2 = new Laser(580, 430, imgActiva, imgInactiva);
-    Laser laser3 = new Laser(750, 1000, imgActiva, imgInactiva);
-    Laser laser4 = new Laser(1050, 1000, imgActiva, imgInactiva);
+        Laser laser1 = new Laser(900, 430, imgActiva, imgInactiva);
+        Laser laser2 = new Laser(580, 430, imgActiva, imgInactiva);
+        Laser laser3 = new Laser(750, 1000, imgActiva, imgInactiva);
+        Laser laser4 = new Laser(1050, 1000, imgActiva, imgInactiva);
 
-    lasers.add(laser1);
-    lasers.add(laser2);
-    lasers.add(laser3);
-    lasers.add(laser4);
+        lasers.add(laser1);
+        lasers.add(laser2);
+        lasers.add(laser3);
+        lasers.add(laser4);
 
-    // Agregar cada láser y su hitbox al root
-    for (Laser laser : lasers) {
-        root.getChildren().add(laser.getSprite());
-        root.getChildren().add(laser.getHitbox());
+            // Asumimos que laser1 y 2 van hacia abajo, laser3 y 4 hacia arriba
+        laser1.configurarHazVertical(600, false); // hacia abajo
+        laser2.configurarHazVertical(600, false); // hacia abajo
+        laser3.configurarHazVertical(600, true);  // hacia arriba
+        laser4.configurarHazVertical(600, true);  // hacia arriba
+
+        // Agregar todos al root (en orden visual)
+        for (Laser laser : lasers) {
+            root.getChildren().add(laser.getHaz());     // el haz primero
+            root.getChildren().add(laser.getSprite());  // sprite encima
+            root.getChildren().add(laser.getHitbox());  // colisión
         }
-    }
 
+    }
 
     private void inicializarFragmento() {
         fragmentoalma = new Fragmentoalma(1440, 625);
         root.getChildren().add(fragmentoalma.getSprite());
     }
-    
+
     public void marcarFragmentoRecogido() {
         if (fragmentoalma != null) {
             fragmentoalma.setRecogido(true);
@@ -160,20 +163,28 @@ public class LaserRoomView {
 
     private void verificarColisionLasers() {
         for (Laser laser : lasers) {
-            if (laser.estaActivo() && laser.getSprite().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
-                if (!lumina.estaInvulnerable()) {
-                    lumina.perderVida();
+            if (laser.estaActivo()) {
+                if (laser.getSprite().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
+                    if (!lumina.estaInvulnerable()) {
+                        lumina.perderVida();
+                        actualizarCorazones();
+                    }
+                }
+
+                if (laser.getHaz().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
+                    lumina.setVidas(0);
                     actualizarCorazones();
+                    System.out.println("Lumina fue destruida por el haz del láser");
                 }
             }
         }
     }
-    
+
     private void detectarSalida() {
         if (fragmentoalma.isRecogido() &&
             lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
             if (onSalida != null) {
-                loop.stop(); // detener el juego
+                loop.stop();
                 onSalida.run();
             }
         }
@@ -187,29 +198,27 @@ public class LaserRoomView {
             zonaSalida.setVisible(true);
             System.out.println("Lúmina obtenida");
         }
-        
+
         if (!salidaActivada &&
             fragmentoalma.isRecogido() &&
             zonaSalida != null &&
             lumina.getSprite().getBoundsInParent().intersects(zonaSalida.getBoundsInParent())) {
-        
-            salidaActivada = true; // Marca que ya se ejecutó
+            salidaActivada = true;
             if (onSalida != null) {
-                loop.stop(); // Detener el juego
-                onSalida.run(); // Ejecutar la acción de salida
+                loop.stop();
+                onSalida.run();
             }
         }
-        
     }
-    
+
     public void setOnSalida(Runnable onSalida) {
         this.onSalida = onSalida;
     }
-    
+
     public Scene getScene() {
-        return root.getScene(); 
+        return root.getScene();
     }
-    
+
     public Lumina getLumina() {
         return lumina;
     }
