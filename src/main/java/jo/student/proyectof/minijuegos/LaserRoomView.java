@@ -109,15 +109,15 @@ public class LaserRoomView {
         lasers.add(laser3);
         lasers.add(laser4);
 
-            // Asumimos que laser1 y 2 van hacia abajo, laser3 y 4 hacia arriba
+            
         laser1.configurarHazVertical(600, false); // hacia abajo
         laser2.configurarHazVertical(600, false); // hacia abajo
         laser3.configurarHazVertical(580, true);  // hacia arriba
         laser4.configurarHazVertical(580, true);  // hacia arriba
 
-        // Agregar todos al root (en orden visual)
+        // Agregar todos al root
         for (Laser laser : lasers) {
-            root.getChildren().add(laser.getHaz());     // el haz primero
+            root.getChildren().add(laser.getHaz());     // el primer laesr
             root.getChildren().add(laser.getSprite());  // sprite encima
             root.getChildren().add(laser.getHitbox());  // colisión
         }

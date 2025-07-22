@@ -39,7 +39,7 @@ public class Game extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        // Inicializar pantalla sin bordes y full-screen real
+        // Inicializar pantalla sin bordes y full-screen
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setFullScreenExitHint("");
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

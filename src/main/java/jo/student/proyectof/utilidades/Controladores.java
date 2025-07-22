@@ -9,8 +9,8 @@ import jo.student.proyectof.entidades.Lumina;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import javafx.scene.Node;//para identificar colisiones
+import javafx.scene.layout.Pane;//donde se dibuja el juego
 
 public class Controladores {
 
@@ -26,7 +26,7 @@ public Controladores(Lumina lumina, Runnable onMovimiento, Pane root) {
     this.lumina = lumina;
     this.onMovimiento = onMovimiento;
 
-    // Buscar todas las paredes automáticamente dentro del root
+    // Buscar todas las paredes automáticamente dentro del root(pantalla)
         for (Node nodo : root.getChildren()) {
         boolean esPared = false;
 
@@ -47,7 +47,7 @@ public Controladores(Lumina lumina, Runnable onMovimiento, Pane root) {
         escena.setOnKeyReleased((KeyEvent e) -> teclasPresionadas.remove(e.getCode()));
 
         animador = new AnimationTimer() {
-            @Override
+            @Override//logica del juego en tiempo real
         public void handle(long now) {
             double prevX = lumina.getSprite().getLayoutX();
             double prevY = lumina.getSprite().getLayoutY();
@@ -62,6 +62,7 @@ public Controladores(Lumina lumina, Runnable onMovimiento, Pane root) {
                     lumina.getSprite().setLayoutX(prevX);
                 }
             }
+            //eje Y
             if (teclasPresionadas.contains(KeyCode.LEFT)) {
                 lumina.getSprite().setLayoutX(prevX - velocidad);
                 seMovio = true;
@@ -89,7 +90,7 @@ public Controladores(Lumina lumina, Runnable onMovimiento, Pane root) {
             }
 
             if (seMovio) {
-                onMovimiento.run(); // verificar monedas, fragmentos, puertas, etc.
+                onMovimiento.run(); // ESTO verifica monedas, fragmentos, puertas, etc.
             }
         }
 

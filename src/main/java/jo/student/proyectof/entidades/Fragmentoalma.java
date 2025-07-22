@@ -6,7 +6,7 @@ package jo.student.proyectof.entidades;
  */
 
 
-import java.io.InputStream;
+import java.io.InputStream;//para cargar cosas
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
@@ -18,7 +18,7 @@ import java.util.List;
 public class Fragmentoalma extends Entidad {
 
     private boolean recogido = false;
-    private List<Image> frames = new ArrayList<>();
+    private List<Image> frames = new ArrayList<>();//se mete la lista de imagenes en un arreglo
     private Timeline animacion;
 
     public Fragmentoalma(double x, double y) {
