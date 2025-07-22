@@ -28,7 +28,6 @@ public class LaserRoomView {
     private Controladores control;
     private Rectangle zonaSalida;
     private Runnable onSalida;
-
     private AnimationTimer loop;
 
     public LaserRoomView(Stage stage) {
@@ -75,7 +74,7 @@ public class LaserRoomView {
             Rectangle pared = new Rectangle(datos[2], datos[3]);
             pared.setX(datos[0]);
             pared.setY(datos[1]);
-            pared.setFill(Color.rgb(255, 255, 255, 0.6));
+            pared.setFill(Color.rgb(0, 0, 0, 0.6));
             pared.setUserData("pared");
             root.getChildren().add(pared);
         }
@@ -91,8 +90,8 @@ public class LaserRoomView {
 
     private void inicializarLumina() {
         lumina = new Lumina();
-        lumina.getSprite().setLayoutX(100);
-        lumina.getSprite().setLayoutY(600);
+        lumina.getSprite().setLayoutX(80);
+        lumina.getSprite().setLayoutY(580);
         root.getChildren().add(lumina.getSprite());
     }
 
@@ -113,8 +112,8 @@ public class LaserRoomView {
             // Asumimos que laser1 y 2 van hacia abajo, laser3 y 4 hacia arriba
         laser1.configurarHazVertical(600, false); // hacia abajo
         laser2.configurarHazVertical(600, false); // hacia abajo
-        laser3.configurarHazVertical(600, true);  // hacia arriba
-        laser4.configurarHazVertical(600, true);  // hacia arriba
+        laser3.configurarHazVertical(580, true);  // hacia arriba
+        laser4.configurarHazVertical(580, true);  // hacia arriba
 
         // Agregar todos al root (en orden visual)
         for (Laser laser : lasers) {

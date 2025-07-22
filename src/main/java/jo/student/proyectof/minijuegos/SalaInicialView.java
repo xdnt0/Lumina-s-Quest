@@ -47,10 +47,9 @@ public class SalaInicialView {
         puerta2.setOpacity(0.0);
         root.getChildren().add(puerta2);
 
-        puerta3 = new Rectangle(400, 800, 140, 70); // al lado de Lumina
-puerta3.setFill(Color.RED); // visible
-puerta3.setOpacity(0.5);
-root.getChildren().add(puerta3);
+        puerta3 = new Rectangle(1380, 150, 140, 70); // al lado de Lumina
+        puerta3.setOpacity(0.5);
+        root.getChildren().add(puerta3);
 
 
         // 4. Paredes que SÍ bloquean el movimiento
