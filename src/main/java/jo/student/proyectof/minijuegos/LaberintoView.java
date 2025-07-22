@@ -62,7 +62,7 @@ public class LaberintoView {
         laberintoPane.getChildren().add(fragmentoalma.getSprite());
         
         // Zona de salida         
-        zonaSalida = new Rectangle(13, 361, 37, 84); // ejemplo en la parte inferior
+        zonaSalida = new Rectangle(13, 361, 37, 84); 
         zonaSalida.setOpacity(0.0); // invisible
         laberintoPane.getChildren().add(zonaSalida);
         
