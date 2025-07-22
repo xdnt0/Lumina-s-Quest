@@ -8,7 +8,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import jo.student.proyectof.entidades.Lumina;
 import jo.student.proyectof.entidades.Laser;
 import jo.student.proyectof.entidades.Fragmentoalma;
@@ -161,20 +160,26 @@ public class LaserRoomView {
         lasers.forEach(Laser::actualizar);
     }
 
-    private void verificarColisionLasers() {
+        private void verificarColisionLasers() {
         for (Laser laser : lasers) {
             if (laser.estaActivo()) {
+                // Colisión con sprite del láser (base)
                 if (laser.getSprite().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
                     if (!lumina.estaInvulnerable()) {
                         lumina.perderVida();
                         actualizarCorazones();
+                        laser.desactivarTemporalmente(); // ahora también el sprite es pared
                     }
                 }
 
-                if (laser.getHaz().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
-                    lumina.setVidas(0);
-                    actualizarCorazones();
-                    System.out.println("Lumina fue destruida por el haz del láser");
+                // Colisión con el haz del láser
+                if (laser.getHaz().isVisible() &&
+                    laser.getHaz().getBoundsInParent().intersects(lumina.getSprite().getBoundsInParent())) {
+                    if (!lumina.estaInvulnerable()) {
+                        lumina.perderVida();
+                        actualizarCorazones();
+                        laser.desactivarTemporalmente(); // evita daño repetido
+                    }
                 }
             }
         }
