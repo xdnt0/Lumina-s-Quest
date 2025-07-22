@@ -24,53 +24,51 @@ import jo.student.proyectof.entidades.*;
 
 public class CodigoSecretoView {
     //Atributos
-    private Pane root;
+    private final Pane root;
     private Lumina lumina;
     private PinPad pinPad;
-    private List<Libro> libros = new ArrayList<>();
-    private Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),24);
+    private final List<Libro> libros = new ArrayList<>();
+    private final Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),24);
     private Fragmentoalma fragmentoAlma;
-    private List<Moneda> monedas = new ArrayList<>();
+    private final List<Moneda> monedas = new ArrayList<>();
 
     //Métodos
+    //Constructor
     public CodigoSecretoView(int width, int height) {
         root = new Pane();
         root.setPrefSize(width, height);
         inicializarVista();
-        System.out.println("CodigoSecretoView cargado con " + root.getChildren().size() + " nodos.");
         inicializarParedes();
         inicializarMonedas();
     }
 
+    //Lo que es en sí lo que se va a ver
     private void inicializarVista() {
-        //Fondo
         Image fondo = new Image(getClass().getResourceAsStream("/images/minijuegos/2/Biblioteca.png"));
         ImageView fondoView = new ImageView(fondo);
         root.getChildren().add(fondoView);
 
-        //Lumina
         lumina = new Lumina();
         lumina.getSprite().setLayoutX(200);
         lumina.getSprite().setLayoutY(800);
         root.getChildren().add(lumina.getSprite());
 
-        //Libros con pistas
+        //Inicializamos los libros con las pistas de una vez
         libros.add(new Libro(175, 488, "1° : 3° + 9"));
         libros.add(new Libro(453, 220, "2° : par mayor a 4"));
         libros.add(new Libro(1500, 50, "3° : # monedas en el laberinto"));
         libros.add(new Libro(1850, 800, "4° : 0"));
-
         libros.forEach(libro -> {
             root.getChildren().addAll(libro.getSprite(), libro.getTextoPista());
         });
 
-        //PinPad
+        //El pinpad con el código correcto
         pinPad = new PinPad(1200, 600, "2630");
         pinPad.getTextoDisplay().setFont(fuente);
         pinPad.getTextoDisplay().setStyle("-fx-fill: white;"); 
         root.getChildren().addAll(pinPad.getAreaInteraccion(), pinPad.getTextoDisplay());
         
-        //Fragmento de alma
+        //el fragmento es invisible en principio porque aparece cuando se da el código correcto
         fragmentoAlma = new Fragmentoalma(850,688);
         fragmentoAlma.getSprite().setVisible(false);
         root.getChildren().add(fragmentoAlma.getSprite());
@@ -83,10 +81,10 @@ public class CodigoSecretoView {
         };
 
         for (int[] datos : paredesData) {
-            Rectangle pared = new Rectangle(datos[2], datos[3]); // ancho, alto
+            Rectangle pared = new Rectangle(datos[2], datos[3]);
             pared.setX(datos[0]); 
             pared.setY(datos[1]); 
-            pared.setFill(Color.TRANSPARENT); // invisible
+            pared.setFill(Color.TRANSPARENT);
             pared.setUserData("pared");
             root.getChildren().add(pared);
         }
@@ -106,8 +104,9 @@ public class CodigoSecretoView {
         }
     }
     
+    //Lo que pasa con cada uno de los elementos en el minijuego
     public void InteraccionLibrosPinpadMonedas() {
-        //Interacción con libros
+        //para los libros mostramos la pista
         libros.forEach(libro -> {
             if (lumina.getSprite().getBoundsInParent().intersects(libro.getBounds().getBoundsInParent())) {
                 libro.mostrarPista();
@@ -116,44 +115,43 @@ public class CodigoSecretoView {
             }
         });
 
-        //Interacción con PinPad
+        //el pinpad pide ingresar el código
         if (lumina.getSprite().getBoundsInParent().intersects(pinPad.getAreaInteraccion().getBoundsInParent())) {
             pinPad.getTextoDisplay().setText("Ingrese código");
         } else {
             pinPad.resetear();
         }
         
-        //Interacción con monedas
+        //las monedas se recogen (se remueven del array que las pone en pantalla)
         monedas.removeIf(moneda -> {
         if (moneda.getSprite().isVisible() && 
             lumina.getSprite().getBoundsInParent().intersects(moneda.getSprite().getBoundsInParent())) {
-            
             root.getChildren().remove(moneda.getSprite());
             System.out.println("Moneda recogida!");
             return true;
         }
         return false;
-    });
+        });
     }
     
+    //el código que da el usuario es solo números y la reacción de que sea correcto
     public void manejarInput(String input) {
         if (lumina.getSprite().getBoundsInParent().intersects(pinPad.getAreaInteraccion().getBoundsInParent())) {
-            if (input.matches("\\d")) { //Solo dígitos
+            if (input.matches("\\d")) { //Solo actualiza si es dígito
                 pinPad.ingresarDigito(input);
                 
-                //Verificación automática al completar 4 dígitos
+                //al ser 4 digitos verificamos el código
                 if (pinPad.getTextoDisplay().getText().replace("_", "").length() == 4) {
                     boolean esCorrecto=pinPad.verificarCodigo();
                     if (esCorrecto) {
-                    //Mostrar fragmento de alma si el código es correcto
-                    mostrarFragmentoAlma();
+                        mostrarFragmentoAlma();
                 } else {
-                    //Reset después de 2 segundos (si es incorrecto)
+                    //se resetea si el código está mal
                     new java.util.Timer().schedule(
                         new java.util.TimerTask() {
                             @Override
                             public void run() {
-                                Platform.runLater(() -> pinPad.resetear());
+                                Platform.runLater(() -> pinPad.resetear()); //qué hace cuando pasa el tiempo
                             }
                         }, 
                         2000
@@ -164,15 +162,14 @@ public class CodigoSecretoView {
         }
     }
 
+    //para mostrar el fragmento de alma
     public void mostrarFragmentoAlma() {
-        //Solo mostrar si no ha sido recogido
         if (!fragmentoAlma.isRecogido()) {
             fragmentoAlma.getSprite().setVisible(true);
 
-            //Animación
+            //la animación primero colapsa la imagen y luego la devuelve a su tamaño normal
             fragmentoAlma.getSprite().setScaleX(0);
             fragmentoAlma.getSprite().setScaleY(0);
-
             new Timeline(
                 new KeyFrame(Duration.seconds(0.5),
                     new KeyValue(fragmentoAlma.getSprite().scaleXProperty(), 1),
@@ -182,17 +179,16 @@ public class CodigoSecretoView {
         }
     }
 
+    //para una mejor salida del minijuego
     public void mostrarMensajeTransicion(String mensaje) {
         Text textoTransicion = new Text(mensaje);
         textoTransicion.setFont(fuente);
         textoTransicion.setFill(Color.WHITE);
-        textoTransicion.setStyle("-fx-font-size: 36; -fx-effect: dropshadow(three-pass-box, black, 10, 0.5, 0, 0);");
+        textoTransicion.setStyle("-fx-font-size: 36;");
         textoTransicion.setX(600);
         textoTransicion.setY(950);
-
         root.getChildren().add(textoTransicion);
-
-        //Animación de fade out con más tiempo pa que no se vea extraño
+        //Animación de desaparición con más tiempo pa que no se vea extraño
         Timeline animacion = new Timeline(
             new KeyFrame(Duration.seconds(6.0),
                 new KeyValue(textoTransicion.opacityProperty(), 0)

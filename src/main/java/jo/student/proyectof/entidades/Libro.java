@@ -6,18 +6,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-/**
- *
- * @author cavelasquezo
- */
+
 public class Libro extends Entidad{
     //Atributos
-    private String pista;
-    private Text textoPista;
+    private final String pista; //lo que es la pista en si
+    private final Text textoPista; //para mostrar en pantalla la pista
     private boolean mostrandoPista = false;
-    private Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),16);
+    private final Font fuente = Font.loadFont(getClass().getResourceAsStream("/fuentes/DepartureMono-Regular.otf"),16);
 
     //Métodos
+    //Constructor
     public Libro(double x, double y, String pista) {
         this.pista = pista;
         Image img = new Image(getClass().getResourceAsStream("/images/libro/Libro1.png"));
@@ -31,28 +29,29 @@ public class Libro extends Entidad{
         this.textoPista.setStyle("-fx-font-size: 16; -fx-fill: white;");
     }
 
+    //Para tener la ubicación del libro (hitbox)
     @Override
     public Rectangle getBounds() {
-    Bounds bounds = sprite.getBoundsInParent();
-    return new Rectangle(
-        bounds.getMinX(), 
-        bounds.getMinY(),
-        bounds.getWidth(),
-        bounds.getHeight()
-    );
-}
+        Bounds bounds = sprite.getBoundsInParent();
+        return new Rectangle(
+            bounds.getMinX(), 
+            bounds.getMinY(),
+            bounds.getWidth(),
+            bounds.getHeight()
+        );
+    }
 
     public boolean isMostrandoPista() {
         return mostrandoPista;
     }
 
+    //Mostrar y ocultar pista del libro
     public void mostrarPista() {
         if (!mostrandoPista) {
             textoPista.setText(pista);
             mostrandoPista = true;
         }
     }
-
     public void ocultarPista() {
         textoPista.setText("");
         mostrandoPista = false;
@@ -62,6 +61,7 @@ public class Libro extends Entidad{
         return textoPista;
     }
 
+    //implementar por ser hija de entidad
     @Override
     public void colision(Entidad otra) {
     }
